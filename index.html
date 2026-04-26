@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FFT-based Calcium Transient Denoising App | User Guide</title>
+  <meta name="description" content="Detailed user guide for the FFT-based Denoising Data App for calcium transient analysis, peak detection, baseline correction, FFT smoothing, and metric export." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hero">
+    <nav class="topbar" aria-label="Main navigation">
+      <div class="brand">
+        <span class="brand-mark">FFT</span>
+        <span>Calcium Transient Analysis App</span>
+      </div>
+      <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#data">Data input</a></li>
+        <li><a href="#workflow">Workflow</a></li>
+        <li><a href="#parameters">Parameters</a></li>
+        <li><a href="#outputs">Outputs</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero-content">
+      <p class="eyebrow">User documentation for reviewers and end users</p>
+      <h1>FFT-based Denoising Data App for Calcium Transient Analysis</h1>
+      <p class="lead">
+        This guide explains how to use the application to load calcium imaging traces,
+        select a region of interest, smooth the signal using FFT low-pass filtering,
+        detect calcium transients, compute transient-level and trace-level metrics,
+        evaluate FFT smoothing settings, and export publication-ready results.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#quick-start">Start guide</a>
+        <a class="button secondary" href="#data-format">View data format</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <aside class="toc" aria-label="Page contents">
+      <strong>Contents</strong>
+      <a href="#overview">1. Overview</a>
+      <a href="#intended-use">2. Intended use</a>
+      <a href="#data">3. Data input</a>
+      <a href="#quick-start">4. Quick start</a>
+      <a href="#workflow">5. Analysis workflow</a>
+      <a href="#parameters">6. Parameters</a>
+      <a href="#baseline">7. Baseline options</a>
+      <a href="#fft-selection">8. FFT selection</a>
+      <a href="#outputs">9. Outputs</a>
+      <a href="#downloads">10. Downloads</a>
+      <a href="#troubleshooting">11. Troubleshooting</a>
+      <a href="#faq">12. FAQ</a>
+    </aside>
+
+    <section id="overview" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Purpose</p>
+        <h2>1. Overview</h2>
+      </div>
+      <div class="grid two">
+        <div>
+          <p>
+            The FFT-based Denoising Data App is an interactive Shiny application designed
+            to analyze calcium transient traces from one or more regions of interest (ROIs).
+            The app first smooths the selected trace using a low-pass Fast Fourier Transform
+            (FFT) reconstruction and then detects transient peaks using user-defined peak
+            criteria. The app reports quantitative metrics for each transient and summary
+            metrics for the complete trace.
+          </p>
+          <p>
+            The central idea is to preserve biologically meaningful low-frequency calcium
+            transient dynamics while reducing high-frequency noise. The resulting smoothed
+            signal is used for peak detection, peak annotation, amplitude estimation,
+            prominence calculation, width measurements, rise-time analysis, and optional
+            area-under-the-curve analysis.
+          </p>
+        </div>
+        <div class="card">
+          <h3>What the app does</h3>
+          <ul class="checklist">
+            <li>Loads example data or user-provided CSV, TSV, or JSON files.</li>
+            <li>Selects a single ROI trace for detailed analysis.</li>
+            <li>Applies FFT low-pass smoothing with a user-controlled frequency fraction.</li>
+            <li>Detects peaks using ascent, descent, height, distance, FWHP, and prominence thresholds.</li>
+            <li>Supports multiple baseline definitions, including dynamic percentile baselines.</li>
+            <li>Calculates transient-level and trace-level calcium metrics.</li>
+            <li>Provides Fourier analysis plots, a frequency table, and an explicit reconstruction formula.</li>
+            <li>Exports CSV tables and a high-resolution calcium trace graph.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="intended-use" class="section soft">
+      <div class="section-heading">
+        <p class="eyebrow">Scope</p>
+        <h2>2. Intended use</h2>
+      </div>
+      <p>
+        The application is intended for users working with calcium fluorescence traces, such as
+        ΔF/F<sub>0</sub> time series extracted from microscopy or calcium imaging pipelines.
+        It is especially useful when the user needs a reproducible and visual workflow for
+        comparing raw and smoothed traces, identifying calcium transient events, and exporting
+        standardized quantitative descriptors.
+      </p>
+      <div class="notice">
+        <strong>Important:</strong> The app is an analytical and visualization tool. Final biological
+        interpretation should consider experimental design, acquisition frequency, noise level,
+        cell type, stimulation protocol, and the appropriateness of the selected peak thresholds.
+      </div>
+    </section>
+
+    <section id="data" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Input</p>
+        <h2>3. Data input</h2>
+      </div>
+
+      <h3 id="data-format">Accepted file formats</h3>
+      <p>
+        The app can be used with the built-in example dataset or with a user-uploaded file.
+        Supported user-uploaded formats are:
+      </p>
+
+      <div class="cards three">
+        <article class="mini-card">
+          <h4>CSV</h4>
+          <p>Comma-separated text file. Recommended for most users.</p>
+        </article>
+        <article class="mini-card">
+          <h4>TSV</h4>
+          <p>Tab-separated text file. Useful when decimal or comma conventions conflict.</p>
+        </article>
+        <article class="mini-card">
+          <h4>JSON</h4>
+          <p>Structured file support for component-based calcium imaging output.</p>
+        </article>
+      </div>
+
+      <h3>Required table structure for CSV/TSV files</h3>
+      <p>
+        The first column must contain time values. Each additional column must correspond to one ROI.
+        The app assumes that the ROI number selected in the interface refers to the ROI columns after
+        the time column. For example, ROI 1 corresponds to the second column of the dataset.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>ROI_1</th>
+              <th>ROI_2</th>
+              <th>ROI_3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>0.0</td><td>0.512</td><td>0.423</td><td>0.603</td></tr>
+            <tr><td>0.5</td><td>0.536</td><td>0.447</td><td>0.619</td></tr>
+            <tr><td>1.0</td><td>0.558</td><td>0.461</td><td>0.641</td></tr>
+            <tr><td>1.5</td><td>0.549</td><td>0.475</td><td>0.632</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notice">
+        <strong>Data preparation recommendation:</strong> Check that the time column is numeric,
+        the ROI columns are numeric, and missing values have been handled before upload. The time
+        unit used in the first column will also define the time unit of all reported time metrics.
+      </div>
+    </section>
+
+    <section id="quick-start" class="section soft">
+      <div class="section-heading">
+        <p class="eyebrow">Basic operation</p>
+        <h2>4. Quick start</h2>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <strong>Choose the data source.</strong>
+          Select <em>Example Data = Yes</em> to test the app with built-in calcium-like traces.
+          Select <em>Example Data = No</em> to upload your own CSV, TSV, or JSON file.
+        </li>
+        <li>
+          <strong>Select the ROI.</strong>
+          Enter the number of the region of interest in <em>Region of Interest (ROI)</em>.
+          ROI 1 corresponds to the first signal column after the time column.
+        </li>
+        <li>
+          <strong>Choose the FFT smoothing intensity.</strong>
+          Use <em>FFT Low-Frequency Fraction</em> to control how much of the low-frequency
+          content is retained. Smaller values produce stronger smoothing; values closer to 1
+          preserve more of the original signal.
+        </li>
+        <li>
+          <strong>Keep or remove the mean.</strong>
+          Leave <em>Keep mean (DC component)</em> checked when the global signal level should
+          be preserved during FFT reconstruction.
+        </li>
+        <li>
+          <strong>Set peak detection parameters.</strong>
+          Adjust peak height, ascent, descent, minimum distance, FWHP threshold, and prominence
+          threshold until the detected peaks match the expected calcium transients.
+        </li>
+        <li>
+          <strong>Select a baseline definition.</strong>
+          Choose a fixed or dynamic baseline depending on the experimental signal behavior.
+        </li>
+        <li>
+          <strong>Inspect outputs.</strong>
+          Review the <em>SummaryData</em>, <em>Peaks</em>, <em>Fourier analysis</em>, and
+          <em>FFT selection criteria</em> tabs.
+        </li>
+        <li>
+          <strong>Export results.</strong>
+          Download transient metrics, trace metrics, or a high-resolution calcium trace graph.
+        </li>
+      </ol>
+    </section>
+
+    <section id="workflow" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Analysis logic</p>
+        <h2>5. Analysis workflow</h2>
+      </div>
+
+      <div class="workflow">
+        <div class="workflow-step">
+          <span>1</span>
+          <h3>Load data</h3>
+          <p>The app reads the dataset and displays the number of ROIs and time observations.</p>
+        </div>
+        <div class="workflow-step">
+          <span>2</span>
+          <h3>Select ROI</h3>
+          <p>The selected ROI trace is extracted as a two-column time-signal dataset.</p>
+        </div>
+        <div class="workflow-step">
+          <span>3</span>
+          <h3>FFT smoothing</h3>
+          <p>The signal is transformed with FFT, low-frequency components are retained, and the smoothed trace is reconstructed.</p>
+        </div>
+        <div class="workflow-step">
+          <span>4</span>
+          <h3>Peak detection</h3>
+          <p>Peaks are detected on the smoothed trace using user-defined peak parameters.</p>
+        </div>
+        <div class="workflow-step">
+          <span>5</span>
+          <h3>Baseline correction</h3>
+          <p>The selected baseline is used to interpret amplitude, AUC, and FWHM-related quantities.</p>
+        </div>
+        <div class="workflow-step">
+          <span>6</span>
+          <h3>Metric extraction</h3>
+          <p>The app computes transient-level and trace-level summaries and makes them available for export.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="parameters" class="section soft">
+      <div class="section-heading">
+        <p class="eyebrow">Controls</p>
+        <h2>6. Parameter guide</h2>
+      </div>
+
+      <div class="accordion">
+        <button class="accordion-button">Dataset and ROI controls</button>
+        <div class="accordion-panel">
+          <dl>
+            <dt>Example Data</dt>
+            <dd>When set to <em>Yes</em>, the app loads a built-in dataset with four simulated ROI traces. This is useful for learning the workflow.</dd>
+            <dt>Dataset</dt>
+            <dd>File upload field for CSV, TSV, or JSON files when <em>Example Data</em> is set to <em>No</em>.</dd>
+            <dt>Region of Interest (ROI)</dt>
+            <dd>Numeric selector indicating which ROI trace should be analyzed. The first ROI is the first signal column after the time column.</dd>
+          </dl>
+        </div>
+
+        <button class="accordion-button">FFT controls</button>
+        <div class="accordion-panel">
+          <dl>
+            <dt>FFT Low-Frequency Fraction</dt>
+            <dd>
+              Controls the fraction of positive low-frequency components retained during reconstruction.
+              A smaller fraction removes more high-frequency variation and produces stronger smoothing.
+              A larger fraction preserves more details and may retain more noise.
+            </dd>
+            <dt>Keep mean (DC component)</dt>
+            <dd>
+              Keeps the global average of the trace in the reconstructed signal. This option is recommended
+              unless the analysis intentionally requires removing the global offset.
+            </dd>
+          </dl>
+        </div>
+
+        <button class="accordion-button">Peak detection controls</button>
+        <div class="accordion-panel">
+          <dl>
+            <dt>Peak Height (min)</dt>
+            <dd>Minimum signal height required for a point to be considered a peak.</dd>
+            <dt>Peak Ascent</dt>
+            <dd>Minimum number of consecutive increasing points before the peak.</dd>
+            <dt>Peak Descent</dt>
+            <dd>Minimum number of consecutive decreasing points after the peak.</dd>
+            <dt>Min Peak Distance</dt>
+            <dd>Minimum separation between detected peaks, expressed in number of observations.</dd>
+            <dt>FWHP (min)</dt>
+            <dd>Minimum full width at half prominence. Peaks below this width are filtered out.</dd>
+            <dt>Prominence (min)</dt>
+            <dd>Minimum vertical prominence of the peak above its preceding local minimum.</dd>
+          </dl>
+        </div>
+
+        <button class="accordion-button">Display and calculation options</button>
+        <div class="accordion-panel">
+          <dl>
+            <dt>Area Under the Curve (AUC)</dt>
+            <dd>When set to <em>Yes</em>, the app calculates and visualizes the area above the selected baseline.</dd>
+            <dt>Raw Data</dt>
+            <dd>When set to <em>Yes</em>, the raw trace is overlaid on the calcium trace graph for comparison with the smoothed trace.</dd>
+            <dt>Full Width at Half Maximum</dt>
+            <dd>When set to <em>Yes</em>, FWHM segments are displayed on the calcium trace graph.</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section id="baseline" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Baseline correction</p>
+        <h2>7. Baseline options</h2>
+      </div>
+
+      <p>
+        Baseline selection influences amplitude correction, AUC calculation, and FWHM estimation.
+        The best option depends on whether the trace has a stable baseline, a drifting baseline,
+        or long-term fluctuations.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Option in app</th>
+              <th>How it is calculated</th>
+              <th>When to use it</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Reference Level 0</td>
+              <td>Uses 0 as the baseline.</td>
+              <td>Use when traces are already normalized around zero or when 0 is the experimental reference.</td>
+            </tr>
+            <tr>
+              <td>Standard definition</td>
+              <td>Uses the mean signal before the first detected transient onset.</td>
+              <td>Use when the initial segment represents resting fluorescence.</td>
+            </tr>
+            <tr>
+              <td>Interval</td>
+              <td>Uses the mean signal between a user-defined lower and upper time limit.</td>
+              <td>Use when a known baseline interval exists.</td>
+            </tr>
+            <tr>
+              <td>Your baseline</td>
+              <td>Uses a manually entered numeric value.</td>
+              <td>Use when the baseline has been estimated externally or must be fixed across ROIs.</td>
+            </tr>
+            <tr>
+              <td>Min</td>
+              <td>Uses the minimum value of the smoothed signal.</td>
+              <td>Use cautiously for clean traces where the minimum approximates baseline.</td>
+            </tr>
+            <tr>
+              <td>Rolling percentile baseline</td>
+              <td>Calculates a percentile baseline using a centered moving window at each time point.</td>
+              <td>Use for traces with slow baseline drift.</td>
+            </tr>
+            <tr>
+              <td>Fixed-window percentile baseline</td>
+              <td>Divides the trace into non-overlapping windows and assigns one percentile baseline per window.</td>
+              <td>Use when the baseline changes over time but should remain constant within each window.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="notice">
+        <strong>Window size:</strong> For rolling and fixed-window percentile baselines, the window size
+        must use the same time unit as the dataset time column. For example, if time is measured in
+        seconds, 10 minutes should be entered as 600 seconds.
+      </div>
+    </section>
+
+    <section id="fft-selection" class="section soft">
+      <div class="section-heading">
+        <p class="eyebrow">Smoothing selection</p>
+        <h2>8. Selecting the FFT Low-Frequency Fraction</h2>
+      </div>
+
+      <p>
+        The <em>FFT selection criteria</em> panel evaluates candidate low-frequency fractions:
+        <strong>0.10, 0.15, 0.20, 0.25, 0.30, 0.35, and 0.40</strong>. This panel helps users
+        select a smoothing level that balances noise reduction with preservation of calcium
+        transient morphology.
+      </p>
+
+      <div class="cards four">
+        <article class="mini-card">
+          <h4>1. Signal morphology</h4>
+          <p>Checks whether the smoothed signal remains strongly aligned with the raw trace.</p>
+        </article>
+        <article class="mini-card">
+          <h4>2. Residual behavior</h4>
+          <p>Assesses the magnitude and structure of the residual signal after smoothing.</p>
+        </article>
+        <article class="mini-card">
+          <h4>3. Spectral power</h4>
+          <p>Evaluates the fraction of periodogram power retained by the selected low-frequency components.</p>
+        </article>
+        <article class="mini-card">
+          <h4>4. Mean peak stability</h4>
+          <p>Compares each candidate mean peak amplitude to a weighted reference mean across candidates.</p>
+        </article>
+      </div>
+
+      <p>
+        The app can recommend a candidate fraction based on these criteria. However, the recommendation
+        is intended as a quantitative guide rather than an automatic decision. Users should inspect the
+        raw/smoothed overlay, residual plot, periodogram, and detected peaks before finalizing the value.
+      </p>
+    </section>
+
+    <section id="outputs" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Results</p>
+        <h2>9. Output tabs and interpretation</h2>
+      </div>
+
+      <div class="tab-guide">
+        <article>
+          <h3>SummaryData</h3>
+          <p>
+            Displays a dataset summary with the number of ROIs and the number of time observations.
+            It also shows the uploaded or example dataset in an interactive table.
+          </p>
+        </article>
+        <article>
+          <h3>Peaks → Metrics</h3>
+          <p>
+            Contains two tables: transient metrics and trace metrics. Transient metrics describe each
+            detected event. Trace metrics summarize the entire selected ROI trace.
+          </p>
+        </article>
+        <article>
+          <h3>Peaks → Metric plots</h3>
+          <p>
+            Shows the calcium trace with detected peaks, baseline references, prominence/FWHP/FWHM
+            annotations when selected, the first derivative plot, and the raw-versus-smoothed comparison.
+          </p>
+        </article>
+        <article>
+          <h3>Peaks → Fourier analysis</h3>
+          <p>
+            Reports the FFT summary, smoothed fit plot, residual plot, spectrum, frequency table,
+            and explicit reconstruction formula using the retained FFT frequencies.
+          </p>
+        </article>
+        <article>
+          <h3>FFT selection criteria</h3>
+          <p>
+            Compares candidate FFT fractions using morphology, residual, spectral power, and
+            mean-peak criteria. This tab is useful for justifying the selected smoothing parameter.
+          </p>
+        </article>
+      </div>
+
+      <h3>Transient-level metrics</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Amplitude</td><td>Peak amplitude corrected by the selected baseline.</td></tr>
+            <tr><td>Baseline_at_peak</td><td>Baseline value assigned to the peak time.</td></tr>
+            <tr><td>Peak_Occurence_Time</td><td>Time at which the peak reaches its maximum.</td></tr>
+            <tr><td>Prominence</td><td>Vertical difference between the peak maximum and the preceding local minimum.</td></tr>
+            <tr><td>FWHP</td><td>Full width at half prominence.</td></tr>
+            <tr><td>FWHM</td><td>Full width at half maximum relative to the selected baseline.</td></tr>
+            <tr><td>Peak_Rise_Time</td><td>Time from transient onset to the peak maximum.</td></tr>
+            <tr><td>Transient_Ocurrence_Time</td><td>Estimated time at which the transient begins to rise.</td></tr>
+            <tr><td>Rise_Rate</td><td>Maximum first-derivative value during the rising phase.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Trace-level metrics</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th>Meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Time_Onset</td><td>Onset time of the first detected transient.</td></tr>
+            <tr><td>Frequency</td><td>Number of detected peaks divided by the duration of the trace.</td></tr>
+            <tr><td>Baseline</td><td>Baseline value used for the trace or representative baseline summary.</td></tr>
+            <tr><td>Number_of_Peaks</td><td>Total number of valid detected transients after filtering.</td></tr>
+            <tr><td>AUC</td><td>Area of the signal above the selected baseline, available when AUC is enabled.</td></tr>
+            <tr><td>P_min / P_max</td><td>Time limits over which the signal is above the integration reference.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="downloads" class="section soft">
+      <div class="section-heading">
+        <p class="eyebrow">Export</p>
+        <h2>10. Downloadable files</h2>
+      </div>
+
+      <div class="cards three">
+        <article class="mini-card">
+          <h4>Trace Metrics</h4>
+          <p>
+            Downloads a CSV file with peak-level measurements, including amplitude,
+            peak occurrence time, prominence, FWHP, FWHM, rise time, transient onset,
+            and rise rate.
+          </p>
+        </article>
+        <article class="mini-card">
+          <h4>Transient Metrics</h4>
+          <p>
+            Downloads a CSV file with trace-level summary metrics such as time onset,
+            frequency, baseline, number of peaks, and AUC when enabled.
+          </p>
+        </article>
+        <article class="mini-card">
+          <h4>Calcium Trace Graph</h4>
+          <p>
+            Downloads the annotated calcium trace as a high-resolution PNG image suitable
+            for reports, presentations, or manuscript preparation.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="best-practices" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Recommendations</p>
+        <h2>11. Recommended analysis practices</h2>
+      </div>
+
+      <ul class="checklist">
+        <li>Start with the example dataset to understand the interface before uploading your own data.</li>
+        <li>Inspect the raw and smoothed traces together before accepting a smoothing value.</li>
+        <li>Use the FFT selection panel to document why a given low-frequency fraction was selected.</li>
+        <li>Adjust peak height and prominence thresholds together to reduce false-positive peak detection.</li>
+        <li>Use a dynamic baseline when the trace shows slow baseline drift over time.</li>
+        <li>Keep all parameter settings consistent when comparing ROIs, groups, or experimental conditions.</li>
+        <li>Export both the metrics and the annotated graph to preserve a reproducible analysis record.</li>
+      </ul>
+    </section>
+
+    <section id="troubleshooting" class="section soft">
+      <div class="section-heading">
+        <p class="eyebrow">Support</p>
+        <h2>12. Troubleshooting</h2>
+      </div>
+
+      <div class="accordion">
+        <button class="accordion-button">No peaks are detected</button>
+        <div class="accordion-panel">
+          <p>
+            Reduce the minimum peak height, reduce the minimum prominence, reduce the minimum peak distance,
+            or check whether the FFT fraction is too small and oversmoothing the trace.
+          </p>
+        </div>
+
+        <button class="accordion-button">Too many peaks are detected</button>
+        <div class="accordion-panel">
+          <p>
+            Increase the minimum peak height, increase the minimum prominence, increase the minimum peak distance,
+            or reduce high-frequency noise using a smaller FFT low-frequency fraction.
+          </p>
+        </div>
+
+        <button class="accordion-button">The smoothed trace does not match the raw trace</button>
+        <div class="accordion-panel">
+          <p>
+            Increase the FFT low-frequency fraction to retain more frequency components. Also verify that
+            <em>Keep mean (DC component)</em> is enabled when the global fluorescence level should be preserved.
+          </p>
+        </div>
+
+        <button class="accordion-button">The baseline looks incorrect</button>
+        <div class="accordion-panel">
+          <p>
+            Try a different baseline mode. For drifting traces, use a rolling percentile or fixed-window percentile
+            baseline. For stable traces, use the standard definition or a known interval.
+          </p>
+        </div>
+
+        <button class="accordion-button">The uploaded file does not load</button>
+        <div class="accordion-panel">
+          <p>
+            Confirm that the first column is time, all ROI columns are numeric, and the file format is CSV, TSV,
+            or JSON. If the file is large, reduce unnecessary columns or split the dataset by experiment.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Questions</p>
+        <h2>13. Frequently asked questions</h2>
+      </div>
+
+      <div class="faq-grid">
+        <article>
+          <h3>Does the app analyze all ROIs at once?</h3>
+          <p>
+            The interface is designed for detailed inspection of one selected ROI at a time.
+            The user can change the ROI number to repeat the workflow for another trace.
+          </p>
+        </article>
+        <article>
+          <h3>What does a smaller FFT fraction mean?</h3>
+          <p>
+            A smaller fraction keeps fewer low-frequency components. This increases smoothing
+            but may remove biologically meaningful details if set too low.
+          </p>
+        </article>
+        <article>
+          <h3>Should the mean component be kept?</h3>
+          <p>
+            In most calcium trace analyses, yes. Keeping the DC component preserves the global
+            average level of the signal after FFT reconstruction.
+          </p>
+        </article>
+        <article>
+          <h3>What is the difference between FWHP and FWHM?</h3>
+          <p>
+            FWHP is based on half prominence, using the vertical distance between the peak
+            and a local minimum. FWHM is based on half maximum relative to the selected baseline.
+          </p>
+        </article>
+        <article>
+          <h3>Can I use AUC with a dynamic baseline?</h3>
+          <p>
+            Yes. When a rolling or fixed-window percentile baseline is selected, the app uses
+            the corresponding baseline trace to estimate the positive area above baseline.
+          </p>
+        </article>
+        <article>
+          <h3>How should I report the analysis?</h3>
+          <p>
+            Report the file format, ROI analyzed, FFT low-frequency fraction, whether the DC
+            component was retained, peak detection thresholds, baseline mode, and exported metrics.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="citation-note" class="section closing">
+      <h2>Suggested methods description</h2>
+      <p>
+        Calcium traces were smoothed using a Fast Fourier Transform low-pass reconstruction.
+        For each selected ROI, the discrete Fourier transform of the signal was computed, a
+        user-defined fraction of the lowest positive-frequency components was retained, and the
+        inverse transform was used to reconstruct the denoised signal. Peaks were detected on the
+        smoothed trace using user-defined ascent, descent, minimum height, minimum distance,
+        minimum prominence, and width criteria. Transient-level metrics included amplitude,
+        peak occurrence time, prominence, FWHP, FWHM, peak rise time, transient onset time, and
+        rise rate. Trace-level metrics included onset time, peak frequency, baseline, number of
+        detected peaks, and area under the curve when enabled.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>
+      FFT-based Calcium Transient Denoising App — User Guide.
+      This static page can be hosted with GitHub Pages.
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

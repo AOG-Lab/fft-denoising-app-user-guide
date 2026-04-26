@@ -1,6 +1,6 @@
-# FFT-based Calcium Transient Denoising App — User Guide Website
+# CalciumInsight for Calcium Transient Analysis — User Guide Website
 
-This repository contains the static user guide website for the **FFT-based Denoising Data App for Calcium Transient Analysis**.
+This repository contains the static user guide website for the **CalciumInsight for Calcium Transient Analysis**.
 
 The website was prepared to provide reviewers and end users with a detailed explanation of how to use the app, including data upload, ROI selection, FFT-based smoothing, peak detection, baseline selection, calcium transient metrics, Fourier analysis, export options, and troubleshooting.
 
@@ -8,7 +8,7 @@ The website was prepared to provide reviewers and end users with a detailed expl
 
 ## Website purpose
 
-The purpose of this website is to document the use of the FFT-based calcium transient analysis application in a clear and reproducible way.
+The purpose of this website is to document the use of the CalciumInsight in a clear and reproducible way.
 
 The guide explains:
 

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wavelet Ridgewalking Guide | CalciumInsights</title>
+  <meta name="description" content="Numbered user guide for the Wavelet Ridgewalking module in CalciumInsights." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="hero guide-hero">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">Ca</span>
+        <span>CalciumInsights</span>
+      </a>
+      <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="fft-guide.html">FFT guide</a></li>
+        <li><a href="wavelet-guide.html">Wavelet guide</a></li>
+      </ul>
+    </nav>
+    <div class="hero-content compact">
+      <p class="eyebrow">Module guide</p>
+      <h1>Wavelet Ridgewalking</h1>
+      <p class="lead">
+        Numbered guide for the wavelet-based workflow. The section numbers below should match the visible tabs in the Shiny module.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="index.html">Back to home</a>
+        <a class="button secondary" href="fft-guide.html">Open FFT guide</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <aside class="toc" aria-label="Wavelet guide contents">
+      <strong>Wavelet guide</strong>
+      <a href="#summary">1. SummaryData</a>
+      <a href="#peaks">2. Peaks</a>
+      <a href="#baseline-sensitivity">3. Baseline sensitivity analysis</a>
+      <a href="#metrics">4. Metrics</a>
+      <a href="#metric-plots">5. Metric plots</a>
+      <a href="#wavelet-analysis">6. Wavelet analysis</a>
+      <a href="#parameters">Wavelet parameters</a>
+      <a href="#baseline">Shared baseline options</a>
+      <a href="#reporting">Suggested reporting</a>
+    </aside>
+
+    <div class="content">
+      <section id="summary" class="section">
+        <div class="section-heading"><p class="eyebrow">Wavelet tab</p><h2>1. SummaryData</h2></div>
+        <p>
+          This tab summarizes the dataset and selected ROI before wavelet ridgewalking. It should match the SummaryData structure used in the FFT module.
+        </p>
+        <ul class="checklist">
+          <li>Dataset Summary: observations, ROIs, and selected ROI.</li>
+          <li>Dataset: interactive table of loaded data.</li>
+          <li>Selected ROI Trace: time-series plot of the selected calcium signal.</li>
+          <li>Selected ROI Descriptive Summary: basic descriptive statistics.</li>
+        </ul>
+      </section>
+
+      <section id="peaks" class="section soft">
+        <div class="section-heading"><p class="eyebrow">Wavelet tab</p><h2>2. Peaks</h2></div>
+        <p>
+          This tab shows wavelet-detected calcium events. In this module, events are detected as ridge-like structures across scales rather than only as local maxima in the smoothed trace.
+        </p>
+        <ul class="checklist">
+          <li>Accepted, low-confidence, or rejected event status.</li>
+          <li>Annotated calcium trace with wavelet-detected events.</li>
+          <li>Event-level metrics such as onset, peak time, amplitude, AUC, and wavelet-specific descriptors.</li>
+          <li>Optional biological post-filtering based on event criteria.</li>
+        </ul>
+      </section>
+
+      <section id="baseline-sensitivity" class="section">
+        <div class="section-heading"><p class="eyebrow">Wavelet tab</p><h2>3. Baseline sensitivity analysis</h2></div>
+        <p>
+          This tab compares wavelet-derived metrics across baseline definitions. Wavelet detection itself is based on time-scale structure, but post-detection metrics such as amplitude and AUC still depend on baseline.
+        </p>
+        <ul class="checklist">
+          <li>Comparison table across shared baseline definitions.</li>
+          <li>Metric plots across baseline definitions.</li>
+          <li>Automatic interpretation of amplitude, AUC, and FWHM sensitivity.</li>
+        </ul>
+      </section>
+
+      <section id="metrics" class="section soft">
+        <div class="section-heading"><p class="eyebrow">Wavelet tab</p><h2>4. Metrics</h2></div>
+        <p>
+          This tab reports wavelet-derived event metrics and trace summaries.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Metric group</th><th>Examples</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>Event detection</td><td>Number of wavelet events, frequency</td><td>How often ridge-like events are detected.</td></tr>
+              <tr><td>Wavelet ridge metrics</td><td>CWT amplitude, ridge length, mean scale</td><td>Strength and multiscale structure of detected events.</td></tr>
+              <tr><td>Timing</td><td>Onset, peak occurrence time, rise time</td><td>When events occur and how they develop.</td></tr>
+              <tr><td>Amplitude</td><td>Amplitude above baseline, prominence, DeltaF/Baseline</td><td>Event intensity after baseline assignment.</td></tr>
+              <tr><td>Area</td><td>Event AUC, total AUC above baseline</td><td>Integrated calcium activity after event detection.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="metric-plots" class="section">
+        <div class="section-heading"><p class="eyebrow">Wavelet tab</p><h2>5. Metric plots</h2></div>
+        <p>
+          This tab visualizes wavelet metrics grouped by family. This avoids placing time, amplitude, AUC, and wavelet-scale metrics on a misleading single scale.
+        </p>
+        <ul class="checklist">
+          <li>Event detection metrics.</li>
+          <li>Time-domain metrics.</li>
+          <li>Signal amplitude metrics.</li>
+          <li>Wavelet ridge metrics.</li>
+          <li>Area under the curve metrics.</li>
+        </ul>
+      </section>
+
+      <section id="wavelet-analysis" class="section soft">
+        <div class="section-heading"><p class="eyebrow">Wavelet tab</p><h2>6. Wavelet analysis</h2></div>
+        <p>
+          This tab displays wavelet-specific diagnostic outputs. It helps users verify whether detected events correspond to meaningful time-scale structures.
+        </p>
+        <ul class="checklist">
+          <li>Continuous wavelet transform amplitude map.</li>
+          <li>Local maxima across scales.</li>
+          <li>Ridge-like event structures.</li>
+          <li>Diagnostic information for selected wavelet parameters.</li>
+        </ul>
+      </section>
+
+      <section id="parameters" class="section">
+        <div class="section-heading"><p class="eyebrow">Controls</p><h2>Wavelet Ridgewalking function arguments</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Control</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>Minimum Scale / Maximum Scale</td><td>Defines the temporal scale range evaluated by the continuous wavelet transform.</td></tr>
+              <tr><td>Number of Scales</td><td>Controls how many scales are evaluated between the minimum and maximum scale.</td></tr>
+              <tr><td>CWT Amplitude Quantile</td><td>Controls which local maxima in the CWT map become candidate ridge points.</td></tr>
+              <tr><td>Ridge Connection Tolerance</td><td>Defines how close local maxima must be in time to connect across neighboring scales.</td></tr>
+              <tr><td>Minimum Ridge Length</td><td>Minimum number of connected scale levels required for a candidate event.</td></tr>
+              <tr><td>Minimum Event Distance</td><td>Minimum temporal separation between accepted candidate events.</td></tr>
+              <tr><td>Metric Window Around Event</td><td>Window used for calculating post-detection event metrics.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="baseline" class="section soft">
+        <div class="section-heading"><p class="eyebrow">Shared controls</p><h2>Shared baseline options</h2></div>
+        <p>The Wavelet module should use the same visible baseline names as the FFT module.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Baseline option</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr><td>Standard definition</td><td>Initial trace fraction baseline.</td></tr>
+              <tr><td>Low-fluorescence region baseline</td><td>Lowest fluorescence values baseline.</td></tr>
+              <tr><td>Rolling percentile baseline</td><td>Dynamic moving-window baseline.</td></tr>
+              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline around each detected event.</td></tr>
+              <tr><td>Median signal (legacy)</td><td>Median baseline for compatibility.</td></tr>
+              <tr><td>Mean signal (legacy)</td><td>Mean baseline for compatibility.</td></tr>
+              <tr><td>Min</td><td>Minimum signal baseline.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="reporting" class="section closing">
+        <h2>Suggested Wavelet reporting sentence</h2>
+        <p>
+          Calcium transients were detected using the Wavelet Ridgewalking module in CalciumInsights. Events were identified as ridge-like structures in a continuous wavelet transform representation using user-defined scale, ridge connection, and event-filtering parameters. Post-detection metrics were calculated using the selected baseline definition, and baseline sensitivity was evaluated across multiple baseline definitions.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer"><p>CalciumInsights — Wavelet Ridgewalking Guide.</p></footer>
+  <script src="script.js"></script>
+</body>
+</html>

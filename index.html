@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CalciumInsights for Calcium Transient Analysis | User Guide</title>
+  <meta name="description" content="User guide for CalciumInsights, an interactive Shiny application for calcium transient analysis using FFT + Baseline Analysis and Wavelet Ridgewalking." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hero">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">Ca</span>
+        <span>CalciumInsights</span>
+      </a>
+      <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="fft-guide.html">FFT guide</a></li>
+        <li><a href="wavelet-guide.html">Wavelet guide</a></li>
+      </ul>
+    </nav>
+    <div class="hero-content">
+      <p class="eyebrow">User documentation for reviewers and end users</p>
+      <h1>CalciumInsights for Calcium Transient Analysis</h1>
+      <p class="lead">
+        A user guide aligned with the active Shiny application. The guide is now organized into separate pages for the two main modules:
+        <strong>FFT + Baseline Analysis</strong> and <strong>Wavelet Ridgewalking</strong>.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="fft-guide.html">Open FFT guide</a>
+        <a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="single">
+    <div class="content">
+      <section id="overview" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Purpose</p>
+          <h2>1. Overview</h2>
+        </div>
+        <div class="grid two">
+          <div>
+            <p>
+              CalciumInsights is an interactive Shiny application for analyzing calcium transient traces from one or more regions of interest.
+              The app includes two complementary workflows: an FFT-based peak-detection workflow and a wavelet ridgewalking workflow.
+            </p>
+            <p>
+              This website is organized so that each module has its own guide page. Each guide uses the same visible numbering used inside the Shiny app.
+              For example, when the FFT guide says <strong>1. SummaryData</strong>, the FFT module tab should also say <strong>1. SummaryData</strong>.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Guide structure</h3>
+            <ul class="checklist">
+              <li>Home page: general purpose and app structure.</li>
+              <li>FFT guide page: numbered tabs and controls for FFT + Baseline Analysis.</li>
+              <li>Wavelet guide page: numbered tabs and controls for Wavelet Ridgewalking.</li>
+              <li>Consistent baseline names across both modules.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="modules" class="section soft">
+        <div class="section-heading">
+          <p class="eyebrow">Main modules</p>
+          <h2>2. Select a module guide</h2>
+        </div>
+        <div class="cards two">
+          <article class="mini-card">
+            <h3>FFT + Baseline Analysis</h3>
+            <p>
+              Peak-based workflow for smoothing calcium traces, detecting local maxima, applying baseline definitions,
+              evaluating FFT smoothing criteria, and extracting transient metrics.
+            </p>
+            <ul class="checklist">
+              <li>1. SummaryData</li>
+              <li>2. Peaks</li>
+              <li>3. Metrics</li>
+              <li>4. Metric plots</li>
+              <li>5. Fourier analysis</li>
+              <li>6. Baseline sensitivity analysis</li>
+              <li>7. FFT selection criteria</li>
+            </ul>
+            <p><a class="button primary" href="fft-guide.html">Open FFT guide</a></p>
+          </article>
+
+          <article class="mini-card">
+            <h3>Wavelet Ridgewalking</h3>
+            <p>
+              Multiscale event-detection workflow for identifying calcium events as ridge-like structures in a wavelet transform representation.
+            </p>
+            <ul class="checklist">
+              <li>1. SummaryData</li>
+              <li>2. Peaks</li>
+              <li>3. Baseline sensitivity analysis</li>
+              <li>4. Metrics</li>
+              <li>5. Metric plots</li>
+              <li>6. Wavelet analysis</li>
+            </ul>
+            <p><a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a></p>
+          </article>
+        </div>
+      </section>
+
+      <section id="baseline" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Consistency rule</p>
+          <h2>3. Shared baseline names</h2>
+        </div>
+        <p>
+          Both modules should use the same visible baseline names. This prevents confusion when users compare FFT-based and wavelet-based results.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Baseline option</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>Standard definition</td><td>Baseline estimated from an initial fraction of the calcium trace.</td></tr>
+              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from the lowest fluorescence values in the selected trace.</td></tr>
+              <tr><td>Rolling percentile baseline</td><td>Dynamic moving-window percentile baseline for drifting traces.</td></tr>
+              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline estimated from minima surrounding each detected event.</td></tr>
+              <tr><td>Median signal (legacy)</td><td>Legacy median baseline option.</td></tr>
+              <tr><td>Mean signal (legacy)</td><td>Legacy mean baseline option.</td></tr>
+              <tr><td>Min</td><td>Minimum signal baseline option.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>CalciumInsights for Calcium Transient Analysis — User Guide for Reviewers and End Users.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -4,133 +4,205 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CalciumInsights for Calcium Transient Analysis | User Guide</title>
-  <meta name="description" content="User guide for CalciumInsights, an interactive Shiny application for calcium transient analysis using FFT + Baseline Analysis and Wavelet Ridgewalking." />
+  <meta name="description" content="Static user guide website for CalciumInsights, organized around the FFT + Baseline Analysis and Wavelet Ridgewalking modules." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="hero">
-    <nav class="topbar" aria-label="Main navigation">
-      <a class="brand" href="index.html">
-        <span class="brand-mark">Ca</span>
-        <span>CalciumInsights</span>
-      </a>
-      <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="fft-guide.html">FFT guide</a></li>
-        <li><a href="wavelet-guide.html">Wavelet guide</a></li>
-      </ul>
-    </nav>
-    <div class="hero-content">
-      <p class="eyebrow">User documentation for reviewers and end users</p>
-      <h1>CalciumInsights for Calcium Transient Analysis</h1>
-      <p class="lead">
-        A user guide aligned with the active Shiny application. The guide is now organized into separate pages for the two main modules:
-        <strong>FFT + Baseline Analysis</strong> and <strong>Wavelet Ridgewalking</strong>.
-      </p>
-      <div class="hero-actions">
-        <a class="button primary" href="fft-guide.html">Open FFT guide</a>
-        <a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a>
+  <header class="guide-header">
+    <div class="header-wrap">
+      <nav class="topbar" aria-label="Main navigation">
+        <a class="brand" href="index.html" aria-label="CalciumInsights home">
+          <span class="brand-mark">Ca</span>
+          <span>CalciumInsights</span>
+        </a>
+        <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+        <ul class="nav-links">
+          <li><a href="index.html" aria-current="page">Home</a></li>
+          <li><a href="fft-guide.html">FFT guide</a></li>
+          <li><a href="wavelet-guide.html">Wavelet guide</a></li>
+        </ul>
+      </nav>
+
+      <div class="hero-copy">
+        <p class="eyebrow">User documentation for reviewers and end users</p>
+        <h1>CalciumInsights for Calcium Transient Analysis</h1>
+        <p class="lead">
+          A structured user guide aligned with the numbered sections of the active Shiny application. The documentation is organized into two dedicated module pages: <strong>FFT + Baseline Analysis</strong> and <strong>Wavelet Ridgewalking</strong>.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="fft-guide.html">Open FFT guide</a>
+          <a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a>
+        </div>
       </div>
     </div>
   </header>
 
-  <main id="main" class="single">
+  <main id="main" class="layout">
+    <aside class="toc" aria-label="Table of contents">
+      <strong>Contents</strong>
+      <a href="#overview">1. Overview</a>
+      <a href="#structure">2. Website structure</a>
+      <a href="#fft">3. FFT guide structure</a>
+      <a href="#wavelet">4. Wavelet guide structure</a>
+      <a href="#baseline">5. Shared baseline names</a>
+      <a href="#workflow">6. Recommended update workflow</a>
+    </aside>
+
     <div class="content">
       <section id="overview" class="section">
         <div class="section-heading">
           <p class="eyebrow">Purpose</p>
           <h2>1. Overview</h2>
         </div>
-        <div class="grid two">
-          <div>
-            <p>
-              CalciumInsights is an interactive Shiny application for analyzing calcium transient traces from one or more regions of interest.
-              The app includes two complementary workflows: an FFT-based peak-detection workflow and a wavelet ridgewalking workflow.
-            </p>
-            <p>
-              This website is organized so that each module has its own guide page. Each guide uses the same visible numbering used inside the Shiny app.
-              For example, when the FFT guide says <strong>1. SummaryData</strong>, the FFT module tab should also say <strong>1. SummaryData</strong>.
-            </p>
-          </div>
-          <div class="card">
-            <h3>Guide structure</h3>
-            <ul class="checklist">
-              <li>Home page: general purpose and app structure.</li>
-              <li>FFT guide page: numbered tabs and controls for FFT + Baseline Analysis.</li>
-              <li>Wavelet guide page: numbered tabs and controls for Wavelet Ridgewalking.</li>
-              <li>Consistent baseline names across both modules.</li>
-            </ul>
-          </div>
+        <p>
+          <strong>CalciumInsights</strong> is an interactive Shiny application for analyzing calcium transient traces from one or more regions of interest. The app includes two complementary workflows: an FFT-based workflow and a wavelet ridgewalking workflow.
+        </p>
+        <p>
+          This home page now follows the same documentation style as <code>fft-guide.html</code> and <code>wavelet-guide.html</code>: a large header, a left table of contents, numbered sections, cards, tables, and a clear workflow for users.
+        </p>
+        <div class="notice">
+          <strong>Consistency rule:</strong> the numbers shown in the guide should match the numbers shown inside the Shiny modules. This helps users move between the app and the documentation without confusion.
         </div>
       </section>
 
-      <section id="modules" class="section soft">
+      <section id="structure" class="section soft">
         <div class="section-heading">
-          <p class="eyebrow">Main modules</p>
-          <h2>2. Select a module guide</h2>
+          <p class="eyebrow">Files</p>
+          <h2>2. Website structure</h2>
         </div>
-        <div class="cards two">
+        <p>The static website is organized as a small multi-page guide that can be hosted directly with GitHub Pages.</p>
+        <div class="cards three">
           <article class="mini-card">
-            <h3>FFT + Baseline Analysis</h3>
-            <p>
-              Peak-based workflow for smoothing calcium traces, detecting local maxima, applying baseline definitions,
-              evaluating FFT smoothing criteria, and extracting transient metrics.
-            </p>
-            <ul class="checklist">
-              <li>1. SummaryData</li>
-              <li>2. Peaks</li>
-              <li>3. Metrics</li>
-              <li>4. Metric plots</li>
-              <li>5. Fourier analysis</li>
-              <li>6. Baseline sensitivity analysis</li>
-              <li>7. FFT selection criteria</li>
-            </ul>
-            <p><a class="button primary" href="fft-guide.html">Open FFT guide</a></p>
+            <h3>Home page</h3>
+            <p><code>index.html</code></p>
+            <p>Introduces the app, explains the website structure, and links to the two module-specific guides.</p>
           </article>
-
           <article class="mini-card">
-            <h3>Wavelet Ridgewalking</h3>
-            <p>
-              Multiscale event-detection workflow for identifying calcium events as ridge-like structures in a wavelet transform representation.
-            </p>
-            <ul class="checklist">
-              <li>1. SummaryData</li>
-              <li>2. Peaks</li>
-              <li>3. Baseline sensitivity analysis</li>
-              <li>4. Metrics</li>
-              <li>5. Metric plots</li>
-              <li>6. Wavelet analysis</li>
+            <h3>FFT module guide</h3>
+            <p><code>fft-guide.html</code></p>
+            <p>Explains the numbered controls, outputs, tables, plots, Fourier analysis, baseline sensitivity, and FFT selection criteria.</p>
+          </article>
+          <article class="mini-card">
+            <h3>Wavelet module guide</h3>
+            <p><code>wavelet-guide.html</code></p>
+            <p>Explains the numbered controls, ridgewalking parameters, biological filters, event metrics, plots, and wavelet analysis.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="fft" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Module 1</p>
+          <h2>3. FFT guide structure</h2>
+        </div>
+        <p>
+          The FFT guide follows the numbered structure used in the FFT module interface. It separates input controls from output tabs and analysis sections.
+        </p>
+        <div class="cards two">
+          <article class="number-card">
+            <h3>Input controls</h3>
+            <ul class="checklist compact">
+              <li>1. Example Data</li>
+              <li>2. Dataset</li>
+              <li>3. Region of Interest (ROI)</li>
+              <li>4. FFT Low-Frequency Fraction</li>
+              <li>5. Find Peaks Function Arguments</li>
+              <li>6. Baseline</li>
+              <li>7. Area Under the Curve (AUC)</li>
+              <li>8. Raw Data</li>
+              <li>9. Full Width at Half Maximum</li>
+              <li>10. Optional Sigmoid Modeling</li>
+              <li>11. Download Options</li>
             </ul>
-            <p><a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a></p>
+          </article>
+          <article class="number-card">
+            <h3>Output sections</h3>
+            <ul class="checklist compact">
+              <li>12. SummaryData</li>
+              <li>13. Peaks</li>
+              <li>14. Baseline Sensitivity Analysis</li>
+              <li>15. FFT Selection Criteria</li>
+            </ul>
+            <p><a class="button inline" href="fft-guide.html">Open FFT guide</a></p>
+          </article>
+        </div>
+      </section>
+
+      <section id="wavelet" class="section soft">
+        <div class="section-heading">
+          <p class="eyebrow">Module 2</p>
+          <h2>4. Wavelet guide structure</h2>
+        </div>
+        <p>
+          The Wavelet guide follows the numbered structure used in the Wavelet Ridgewalking module interface. It highlights multiscale event detection and post-detection biological filtering.
+        </p>
+        <div class="cards two">
+          <article class="number-card">
+            <h3>Input controls</h3>
+            <ul class="checklist compact">
+              <li>1. Example Data</li>
+              <li>2. Dataset</li>
+              <li>3. Region of Interest (ROI)</li>
+              <li>4. Wavelet Ridgewalking Function Arguments</li>
+              <li>5. Baseline</li>
+              <li>6. Biological Event Filters</li>
+              <li>7. Graph Display Options</li>
+            </ul>
+          </article>
+          <article class="number-card">
+            <h3>Output sections</h3>
+            <ul class="checklist compact">
+              <li>8. SummaryData</li>
+              <li>9. Peaks</li>
+              <li>10. Baseline Sensitivity Analysis</li>
+              <li>11. Metrics</li>
+              <li>12. Metric Plots</li>
+              <li>13. Wavelet Analysis</li>
+            </ul>
+            <p><a class="button inline" href="wavelet-guide.html">Open Wavelet guide</a></p>
           </article>
         </div>
       </section>
 
       <section id="baseline" class="section">
         <div class="section-heading">
-          <p class="eyebrow">Consistency rule</p>
-          <h2>3. Shared baseline names</h2>
+          <p class="eyebrow">Consistency</p>
+          <h2>5. Shared baseline names</h2>
         </div>
         <p>
-          Both modules should use the same visible baseline names. This prevents confusion when users compare FFT-based and wavelet-based results.
+          Both modules should use the same visible baseline names. This allows users to compare FFT-derived and wavelet-derived metrics using the same conceptual baseline definitions.
         </p>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Baseline option</th><th>Purpose</th></tr></thead>
+            <thead>
+              <tr><th>Baseline option</th><th>Purpose</th></tr>
+            </thead>
             <tbody>
-              <tr><td>Standard definition</td><td>Baseline estimated from an initial fraction of the calcium trace.</td></tr>
-              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from the lowest fluorescence values in the selected trace.</td></tr>
-              <tr><td>Rolling percentile baseline</td><td>Dynamic moving-window percentile baseline for drifting traces.</td></tr>
-              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline estimated from minima surrounding each detected event.</td></tr>
-              <tr><td>Median signal (legacy)</td><td>Legacy median baseline option.</td></tr>
-              <tr><td>Mean signal (legacy)</td><td>Legacy mean baseline option.</td></tr>
-              <tr><td>Min</td><td>Minimum signal baseline option.</td></tr>
+              <tr><td>Standard definition</td><td>Baseline estimated from an initial fraction of the selected calcium trace.</td></tr>
+              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from the lower fluorescence values of the trace.</td></tr>
+              <tr><td>Rolling percentile baseline</td><td>Dynamic moving-window percentile baseline for drifting or long-term traces.</td></tr>
+              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline estimated from minima surrounding each detected transient.</td></tr>
+              <tr><td>Median signal (legacy)</td><td>Legacy option that uses the median of the selected signal.</td></tr>
+              <tr><td>Mean signal (legacy)</td><td>Legacy option that uses the mean of the selected signal.</td></tr>
+              <tr><td>Min</td><td>Uses the minimum observed signal as the baseline.</td></tr>
             </tbody>
           </table>
         </div>
+      </section>
+
+      <section id="workflow" class="section closing">
+        <div class="section-heading">
+          <p class="eyebrow">Publishing</p>
+          <h2>6. Recommended update workflow</h2>
+        </div>
+        <ol class="workflow-list">
+          <li>Replace the website files in the GitHub repository root.</li>
+          <li>Keep <code>index.html</code>, <code>fft-guide.html</code>, <code>wavelet-guide.html</code>, <code>style.css</code>, <code>script.js</code>, and <code>README.md</code> together.</li>
+          <li>Confirm that the navigation links open the two module guides.</li>
+          <li>Commit and push the changes so GitHub Pages updates the public website.</li>
+        </ol>
       </section>
     </div>
   </main>

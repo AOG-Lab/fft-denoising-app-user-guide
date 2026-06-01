@@ -1,22 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CalciumInsights for Calcium Transient Analysis | User Guide</title>
-  <meta name="description" content="User guide website for CalciumInsights, including FFT + Baseline Analysis and Wavelet Ridgewalking modules." />
+  <title>CalciumInsights | Guía detallada de usuario</title>
+  <meta name="description" content="Guía detallada para interpretar los resultados de CalciumInsights: FFT + Baseline Analysis y Wavelet Ridgewalking." />
   <link rel="stylesheet" href="style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
 
   <header class="site-header">
-    <nav class="topbar" aria-label="Main navigation">
+    <nav class="topbar" aria-label="Navegación principal">
       <a class="brand" href="index.html" aria-label="CalciumInsights home">
         <span class="brand-mark">Ca</span>
         <span class="brand-name">CalciumInsights</span>
       </a>
-      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <button class="nav-toggle" type="button" aria-label="Abrir navegación" aria-expanded="false">☰</button>
       <ul class="nav-links">
         <li><a href="index.html" aria-current="page">Home</a></li>
         <li><a href="fft-guide.html">FFT guide</a></li>
@@ -26,156 +30,176 @@
 
     <section class="hero-panel" aria-labelledby="page-title">
       <div class="hero-text">
-        <p class="eyebrow">User documentation for reviewers and end users</p>
-        <h1 id="page-title">CalciumInsights for Calcium Transient Analysis</h1>
+        <p class="eyebrow">Documentación interpretativa para usuarios y revisores</p>
+        <h1 id="page-title">Guía detallada de CalciumInsights para análisis de transitorios de calcio</h1>
         <p class="lead">
-          A structured guide aligned with the numbered sections of the active Shiny application. Use this page to open the dedicated guides for the <strong>FFT + Baseline Analysis</strong> and <strong>Wavelet Ridgewalking</strong> modules.
+          Esta versión explica no solo dónde hacer clic, sino también qué significa cada tabla, gráfica y métrica que aparece al ejecutar los módulos <strong>FFT + Baseline Analysis</strong> y <strong>Wavelet Ridgewalking</strong>.
         </p>
-        <div class="hero-actions" aria-label="Module guide links">
-          <a class="button primary" href="fft-guide.html">Open FFT guide</a>
-          <a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a>
+        <div class="hero-actions" aria-label="Enlaces a módulos">
+          <a class="button primary" href="fft-guide.html">Abrir guía FFT</a>
+          <a class="button secondary" href="wavelet-guide.html">Abrir guía Wavelet</a>
         </div>
       </div>
 
-      <aside class="hero-card" aria-label="Website structure">
-        <h2>Guide structure</h2>
+      <aside class="hero-card" aria-label="Estructura de la guía">
+        <h2>Qué encontrará el usuario</h2>
         <ol class="compact-list">
-          <li><strong>Home:</strong> overview and navigation.</li>
-          <li><strong>FFT guide:</strong> numbered FFT controls and outputs.</li>
-          <li><strong>Wavelet guide:</strong> numbered ridgewalking controls and outputs.</li>
+          <li>Definición matemática de cada métrica.</li>
+          <li>Interpretación visual de cada gráfica.</li>
+          <li>Reglas prácticas para detectar sensibilidad a baseline, suavizado y método.</li>
         </ol>
       </aside>
     </section>
   </header>
 
   <main id="main" class="page-shell">
-    <aside class="toc" aria-label="Table of contents">
-      <strong>Contents</strong>
-      <a href="#overview">1. Overview</a>
-      <a href="#modules">2. Module guides</a>
-      <a href="#numbering">3. Numbering logic</a>
-      <a href="#baseline">4. Shared baseline names</a>
-     <!-- <a href="#publish">5. Publish on GitHub Pages</a> -->
+    <aside class="toc" aria-label="Tabla de contenidos">
+      <strong>Contenido</strong>
+      <a href="#overview">1. Visión general</a>
+      <a href="#notation">2. Notación común</a>
+      <a href="#modules">3. Guías por módulo</a>
+      <a href="#baseline">4. Baselines compartidos</a>
+      <a href="#how-to-use">5. Cómo usar esta guía</a>
+      <a href="#publish">6. Publicar en GitHub</a>
     </aside>
 
     <div class="content">
       <section id="overview" class="section">
         <div class="section-heading">
-          <p class="eyebrow">Purpose</p>
-          <h2>1. Overview</h2>
+          <p class="eyebrow">Propósito</p>
+          <h2>1. Visión general</h2>
         </div>
         <p>
-          <strong>CalciumInsights</strong> is an interactive Shiny application for analyzing calcium transient traces from one or more regions of interest. The documentation is divided into module-specific pages so users can follow the same order that appears in the app interface.
+          <strong>CalciumInsights</strong> analiza señales de calcio por región de interés, o ROI. La app permite cargar una matriz de tiempo y señales, seleccionar una ROI, detectar eventos, estimar baseline y calcular métricas como amplitud, prominencia, ancho, frecuencia, área bajo la curva y tiempos de subida.
+        </p>
+        <p>
+          Esta documentación está alineada con la numeración visible de la app. Cuando un usuario ve una salida como <code>Baseline Sensitivity Analysis</code>, <code>Grid assessment for candidate FFT fractions</code>, <code>Event-Level Metrics</code> o <code>Wavelet Analysis</code>, puede ir a la sección con el mismo nombre para entender qué está viendo y cómo interpretarlo.
         </p>
         <div class="info">
-          <strong>Important:</strong> the guide numbering should match the visible numbering inside the Shiny modules. This makes the app easier to teach, review, and reproduce.
+          <strong>Idea central:</strong> las métricas de calcio dependen de decisiones metodológicas. La app por eso compara definiciones de baseline, fracciones FFT y detecciones por wavelet para ayudar a distinguir conclusiones robustas de conclusiones sensibles al método.
         </div>
       </section>
 
-      <section id="modules" class="section soft">
+      <section id="notation" class="section soft">
         <div class="section-heading">
-          <p class="eyebrow">Main modules</p>
-          <h2>2. Module guides</h2>
+          <p class="eyebrow">Lenguaje matemático común</p>
+          <h2>2. Notación común</h2>
         </div>
+        <div class="cards two">
+          <article class="formula-card">
+            <h3>Señal y baseline</h3>
+            <p>Usaremos:</p>
+            <p class="math">\[x_i = x(t_i) \quad \text{señal observada en el tiempo } t_i\]</p>
+            <p class="math">\[\hat{x}_i = \hat{x}(t_i) \quad \text{señal suavizada o reconstruida}\]</p>
+            <p class="math">\[b_i = b(t_i) \quad \text{baseline estático, dinámico o local}\]</p>
+          </article>
+          <article class="formula-card">
+            <h3>Métricas básicas</h3>
+            <p class="math">\[A_i = x(t_{p,i}) - b(t_{p,i})\]</p>
+            <p>Amplitud sobre baseline en el pico del evento \(i\).</p>
+            <p class="math">\[\Delta F/F_0 = \frac{x(t_{p,i}) - b(t_{p,i})}{b(t_{p,i})}\]</p>
+            <p>Cambio relativo de fluorescencia. En la app, el término <code>Baseline</code> funciona como \(F_0\).</p>
+          </article>
+        </div>
+      </section>
 
+      <section id="modules" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Módulos activos</p>
+          <h2>3. Guías por módulo</h2>
+        </div>
         <div class="cards two">
           <article class="module-card accent-blue">
-            <p class="module-label">Module 1</p>
+            <p class="module-label">Módulo 1</p>
             <h3>FFT + Baseline Analysis</h3>
             <p>
-              Workflow for FFT smoothing, peak detection, baseline correction, AUC calculation, FWHM/FWHP metrics, optional sigmoid modeling, and FFT selection criteria.
+              Explica el suavizado FFT, detección de picos, baseline, AUC, FWHM/FWHP, modelos sigmoidales opcionales, Fourier Analysis, Baseline Sensitivity Analysis y FFT Selection Criteria.
             </p>
             <ul class="checklist">
-              <li>Input controls: 1–11</li>
-              <li>SummaryData: 12</li>
-              <li>Peaks and Fourier analysis: 13</li>
-              <li>Baseline sensitivity: 14</li>
-              <li>FFT selection criteria: 15</li>
+              <li>Qué significa <code>f</code>, <code>k_keep</code>, <code>corr_raw_smooth</code> y <code>retained_power_frac</code>.</li>
+              <li>Cómo interpretar residuales, periodograma y criterios de selección FFT.</li>
+              <li>Qué representa cada facet de la gráfica de sensibilidad a baseline.</li>
             </ul>
-            <a class="button inline" href="fft-guide.html">Open FFT guide</a>
+            <a class="button inline" href="fft-guide.html">Abrir FFT guide</a>
           </article>
 
           <article class="module-card accent-green">
-            <p class="module-label">Module 2</p>
+            <p class="module-label">Módulo 2</p>
             <h3>Wavelet Ridgewalking</h3>
             <p>
-              Workflow for multiscale ridge detection, biological event filtering, baseline sensitivity, transient metrics, metric plots, and wavelet analysis.
+              Explica cómo la app detecta eventos como estructuras multiescala, cómo conecta máximos locales como ridges y cómo calcula métricas biológicas después de aplicar baseline.
             </p>
             <ul class="checklist">
-              <li>Input controls: 1–7</li>
-              <li>SummaryData: 8</li>
-              <li>Peaks: 9</li>
-              <li>Baseline sensitivity: 10</li>
-              <li>Metrics and plots: 11–12</li>
-              <li>Wavelet analysis: 13</li>
+              <li>Qué significan escala, CWT amplitude, ridge length y event status.</li>
+              <li>Cómo leer el mapa CWT y la gráfica de eventos detectados.</li>
+              <li>Cómo interpretar AUC global, Event_AUC y métricas por familia.</li>
             </ul>
-            <a class="button inline" href="wavelet-guide.html">Open Wavelet guide</a>
-          </article>
-        </div>
-      </section>
-
-      <section id="numbering" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Consistency</p>
-          <h2>3. Numbering logic</h2>
-        </div>
-        <div class="cards three">
-          <article class="mini-card">
-            <h3>1. Inputs first</h3>
-            <p>Controls in the left panel are numbered before output tabs. This follows how users configure the analysis.</p>
-          </article>
-          <article class="mini-card">
-            <h3>2. Outputs second</h3>
-            <p>Result tabs are numbered after the inputs. This follows how users interpret the results after running the module.</p>
-          </article>
-          <article class="mini-card">
-            <h3>3. Same names everywhere</h3>
-            <p>The same labels should appear in the Shiny app, guide pages, README, and screenshots.</p>
+            <a class="button inline" href="wavelet-guide.html">Abrir Wavelet guide</a>
           </article>
         </div>
       </section>
 
       <section id="baseline" class="section soft">
         <div class="section-heading">
-          <p class="eyebrow">Shared terminology</p>
-          <h2>4. Shared baseline names</h2>
+          <p class="eyebrow">Terminología compartida</p>
+          <h2>4. Baselines compartidos</h2>
         </div>
-        <p>Both modules should use the same baseline terminology so users can compare FFT-derived and wavelet-derived metrics without confusion.</p>
+        <p>
+          Ambos módulos usan nombres de baseline equivalentes para que las métricas FFT y Wavelet sean comparables.
+        </p>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>Baseline option</th><th>Purpose</th></tr>
+              <tr><th>Baseline</th><th>Idea</th><th>Cuándo ayuda</th></tr>
             </thead>
             <tbody>
-              <tr><td>Standard definition</td><td>Baseline estimated from an initial fraction of the selected calcium trace.</td></tr>
-              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from the lowest fluorescence values in the selected trace.</td></tr>
-              <tr><td>Rolling percentile baseline</td><td>Dynamic moving-window percentile baseline for drifting or long-duration recordings.</td></tr>
-              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline estimated from minima surrounding each detected transient.</td></tr>
-              <tr><td>Median signal (legacy)</td><td>Legacy option that uses the median of the selected signal.</td></tr>
-              <tr><td>Mean signal (legacy)</td><td>Legacy option that uses the mean of the selected signal.</td></tr>
-              <tr><td>Min</td><td>Uses the minimum observed signal as the baseline.</td></tr>
+              <tr><td>Standard definition</td><td>Promedio de una fracción inicial de la señal.</td><td>Grabaciones donde el inicio representa reposo.</td></tr>
+              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimado desde valores bajos de fluorescencia.</td><td>Señales con eventos frecuentes pero con intervalos bajos disponibles.</td></tr>
+              <tr><td>Rolling percentile baseline</td><td>Baseline dinámico calculado con una ventana móvil y un percentil.</td><td>Grabaciones largas con deriva lenta.</td></tr>
+              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Baseline local entre mínimos antes y después del pico.</td><td>Eventos con baseline local variable.</td></tr>
+              <tr><td>Median signal (legacy)</td><td>Mediana de toda la señal.</td><td>Comparación retrospectiva o análisis rápido.</td></tr>
+              <tr><td>Mean signal (legacy)</td><td>Media de toda la señal.</td><td>Comparación retrospectiva; sensible a picos grandes.</td></tr>
+              <tr><td>Min</td><td>Mínimo observado.</td><td>Referencia inferior simple; puede sobreestimar amplitudes si hay ruido hacia abajo.</td></tr>
             </tbody>
           </table>
         </div>
       </section>
-<!--
+
+      <section id="how-to-use" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Uso práctico</p>
+          <h2>5. Cómo usar esta guía</h2>
+        </div>
+        <div class="cards three">
+          <article class="mini-card">
+            <h3>1. Configure la app</h3>
+            <p>Seleccione datos, ROI, baseline y parámetros de detección.</p>
+          </article>
+          <article class="mini-card">
+            <h3>2. Ejecute e inspeccione</h3>
+            <p>Revise las tablas y gráficas generadas por el módulo.</p>
+          </article>
+          <article class="mini-card">
+            <h3>3. Busque el nombre exacto</h3>
+            <p>Use la tabla de contenidos del módulo para encontrar la métrica o salida que aparece en la app.</p>
+          </article>
+        </div>
+      </section>
+
       <section id="publish" class="section closing">
         <div class="section-heading">
           <p class="eyebrow">GitHub Pages</p>
-          <h2>5. Publish on GitHub Pages</h2>
+          <h2>6. Publicar en GitHub</h2>
         </div>
-        <ol class="workflow-list">
-          <li>Replace the repository files with the updated versions.</li>
-          <li>Keep <code>index.html</code>, <code>fft-guide.html</code>, <code>wavelet-guide.html</code>, <code>style.css</code>, <code>script.js</code>, and <code>README.md</code> in the root folder.</li>
-          <li>Commit and push the changes.</li>
-          <li>Open the GitHub Pages URL and refresh the browser cache if needed.</li>
-        </ol>
+        <p>
+          Reemplace los archivos del sitio por <code>index.html</code>, <code>fft-guide.html</code>, <code>wavelet-guide.html</code>, <code>style.css</code>, <code>script.js</code> y <code>README.md</code>. Si usa la imagen de ejemplo incluida, suba también la carpeta <code>assets/</code>.
+        </p>
       </section>
     </div>
-  </main> -->
+  </main>
 
   <footer class="footer">
-    <p>CalciumInsights for Calcium Transient Analysis — User Guide.</p>
+    <p>CalciumInsights — Guía detallada de usuario.</p>
   </footer>
 
   <script src="script.js"></script>

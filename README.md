@@ -1,8 +1,8 @@
-# CalciumInsights User Guide Website
+# CalciumInsights Detailed User Guide Website
 
-This repository contains the static user guide website for **CalciumInsights for Calcium Transient Analysis**.
+This folder contains a detailed static user guide for **CalciumInsights for Calcium Transient Analysis**.
 
-The website is organized as a multi-page guide:
+## Files
 
 ```text
 index.html
@@ -11,40 +11,21 @@ wavelet-guide.html
 style.css
 script.js
 README.md
+assets/baseline-sensitivity-fft.png
 ```
 
-## Pages
+## What changed in this detailed version
 
-### `index.html`
-Main landing page. It introduces the app, explains the numbering logic, and links to the two module-specific guides.
-
-### `fft-guide.html`
-Dedicated guide for the **FFT + Baseline Analysis** module.
-
-The numbered guide follows the same visible order used in the Shiny module:
-
-- Input controls: 1–11
-- 12. SummaryData
-- 13. Peaks
-- 14. Baseline Sensitivity Analysis
-- 15. FFT Selection Criteria
-
-### `wavelet-guide.html`
-Dedicated guide for the **Wavelet Ridgewalking** module.
-
-The numbered guide follows the same visible order used in the Shiny module:
-
-- Input controls: 1–7
-- 8. SummaryData
-- 9. Peaks
-- 10. Baseline Sensitivity Analysis
-- 11. Metrics
-- 12. Metric Plots
-- 13. Wavelet Analysis
+- Expanded mathematical notation for calcium transient metrics.
+- Detailed explanations of FFT smoothing, Fourier reconstruction, residuals, periodogram, and FFT selection criteria.
+- Detailed explanation of Baseline Sensitivity Analysis and each metric shown in the faceted plot.
+- Detailed explanation of Wavelet Ridgewalking, including CWT amplitude, scale, ridge length, event status, event AUC, and global AUC.
+- Tables explaining how to interpret each output table and graph.
+- MathJax support for readable mathematical notation.
 
 ## Baseline naming rule
 
-Both modules should use the same visible baseline names:
+Both modules use the same visible baseline names:
 
 - Standard definition
 - Low-fluorescence region baseline
@@ -56,7 +37,7 @@ Both modules should use the same visible baseline names:
 
 ## How to update GitHub Pages
 
-Replace the files in the root of the repository with the updated files:
+Replace the files in the root of the GitHub Pages repository with:
 
 ```text
 index.html
@@ -67,6 +48,16 @@ script.js
 README.md
 ```
 
+If you use the example screenshot included in the FFT guide, also upload:
+
+```text
+assets/baseline-sensitivity-fft.png
+```
+
 Then commit and push to GitHub.
 
 If the page still looks old, refresh the browser cache using `Shift + Reload` or open the page in an incognito/private window.
+
+## Note about MathJax
+
+The guide uses MathJax from a CDN to render formulas such as `\( AUC = \int \max(x(t)-b(t),0)dt \)`. GitHub Pages will load it normally when the browser has internet access.

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wavelet Ridgewalking | CalciumInsights</title>
+  <meta name="description" content="Detailed guide to the Wavelet Ridgewalking module in CalciumInsights." />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="guide-hero">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="CalciumInsights home">
+        <span class="brand-mark">Ca</span>
+        <span class="brand-name">CalciumInsights</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="fft-guide.html">FFT guide</a></li>
+        <li><a href="wavelet-guide.html" aria-current="page">Wavelet guide</a></li>
+      </ul>
+    </nav>
+    <div class="hero-content">
+      <p class="eyebrow">Module 2</p>
+      <h1>Wavelet Ridgewalking — Detailed Results Guide</h1>
+      <p class="lead">
+        This page explains how the module detects calcium events as multiscale structures, how to interpret ridges in the CWT map, and the meaning of each metric shown in the tables, plots, and baseline sensitivity analysis.
+      </p>
+    </div>
+  </header>
+
+  <main id="main" class="page-shell">
+    <aside class="toc" aria-label="Table of contents">
+      <strong>Wavelet guide</strong>
+      <a href="#overview">Module purpose</a>
+      <a href="#notation">0. Wavelet notation</a>
+      <a href="#s1">1. Example Data</a>
+      <a href="#s2">2. Dataset</a>
+      <a href="#s3">3. ROI</a>
+      <a href="#s4">4. Ridgewalking arguments</a>
+      <a href="#s5">5. Baseline</a>
+      <a href="#s6">6. Biological filters</a>
+      <a href="#s7">7. Graph options</a>
+      <a href="#s8">8. SummaryData</a>
+      <a href="#s9">9. Peaks</a>
+      <a href="#s10">10. Baseline Sensitivity</a>
+      <a href="#s11">11. Metrics</a>
+      <a href="#s12">12. Metric Plots</a>
+      <a href="#s13">13. Wavelet Analysis</a>
+      <a href="#workflow">Recommended workflow</a>
+    </aside>
+
+    <div class="content">
+      <section id="overview" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Method overview</p>
+          <h2>Purpose of the Wavelet Ridgewalking Module</h2>
+        </div>
+        <p>
+          The <strong>Wavelet Ridgewalking</strong> module detects calcium transients using a time-scale representation. Rather than searching only for maxima in a smoothed signal, it calculates an approximation of the continuous wavelet transform, identifies local maxima in wavelet amplitude, and connects these maxima across scales to form <strong>ridges</strong>.
+        </p>
+        <p>
+          After candidate events are detected, the module calculates biologically relevant metrics, including amplitude above baseline, \(\Delta F/F_0\), prominence, FWHM, FWHP, rise time, event AUC, global AUC, ridge length, CWT amplitude, mean scale, and event status.
+        </p>
+        <div class="info">
+          <strong>Key difference from FFT:</strong> wavelet detection occurs before baseline correction is applied. The baseline is used afterward to quantify the detected events. Therefore, the <strong>Baseline Sensitivity Analysis</strong> tab evaluates changes in post-detection metrics rather than changes in the original ridge structure.
+        </div>
+      </section>
+
+      <section id="notation" class="section soft">
+        <div class="section-heading">
+          <p class="eyebrow">Mathematical concepts</p>
+          <h2>0. Wavelet notation</h2>
+        </div>
+        <div class="cards two">
+          <article class="formula-card">
+            <h3>Ricker / Mexican hat wavelet</h3>
+            <p>The module uses a real-valued Ricker-like approximation:</p>
+            <p class="math">\[\psi(u)=(1-u^2)e^{-u^2/2}\]</p>
+            <p>This shape responds strongly to peak-like events with a rise, maximum, and decay phase.</p>
+          </article>
+          <article class="formula-card">
+            <h3>CWT amplitude</h3>
+            <p>For scale \(s\) and central time \(\tau\):</p>
+            <p class="math">\[W(s,\tau)\approx \sum_i z(t_i)\frac{1}{\sqrt{s}}\psi\left(\frac{t_i-\tau}{s}\right)\Delta t\]</p>
+            <p>The application uses the amplitude:</p>
+            <p class="math">\[\mathrm{CWT\ amplitude}=|W(s,\tau)|\]</p>
+          </article>
+        </div>
+        <div class="definition">
+          <strong>Scale:</strong> a small scale detects narrow, rapid events, whereas a large scale detects broader or slower events. A biologically plausible event generally appears as a coherent structure across multiple scales.
+        </div>
+      </section>
+
+      <section id="s1" class="section">
+        <h2>1. Example Data</h2>
+        <p>
+          Allows the use of internally generated simulated data to test the module without uploading a file. This is useful for learning how ridgewalking outputs appear before analyzing experimental data.
+        </p>
+      </section>
+
+      <section id="s2" class="section">
+        <h2>2. Dataset</h2>
+        <p>
+          The input file must contain a time column as the first column, followed by one or more ROI columns. Accepted formats are <code>.csv</code>, <code>.tsv</code>, and <code>.json</code>.
+        </p>
+      </section>
+
+      <section id="s3" class="section">
+        <h2>3. Region of Interest (ROI)</h2>
+        <p>
+          Selects the signal to be analyzed. The selected ROI is used for the CWT calculation, ridge construction, event metrics, AUC calculations, baseline estimation, and all plots.
+        </p>
+      </section>
+
+      <section id="s4" class="section soft">
+        <h2>4. Wavelet Ridgewalking Function Arguments</h2>
+        <p>
+          These parameters control multiscale event detection before biological filters are applied.
+        </p>
+        <div class="formula-card">
+          <h3>Conceptual algorithm</h3>
+          <ol>
+            <li>Calculate CWT amplitude \(|W(s,\tau)|\) across multiple scales.</li>
+            <li>Identify local maxima at each scale that exceed a quantile threshold.</li>
+            <li>Connect nearby maxima across adjacent scales when \(|\tau_s-\tau_{s-1}|\le \epsilon\).</li>
+            <li>Retain ridges with sufficient length.</li>
+            <li>Merge events that are too close together.</li>
+          </ol>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Control</th><th>Definition</th><th>Effect of increasing the value</th></tr></thead>
+            <tbody>
+              <tr><td>4.1. Minimum Scale</td><td>Minimum scale included in the analysis.</td><td>May exclude very narrow events if increased excessively.</td></tr>
+              <tr><td>4.2. Maximum Scale</td><td>Maximum scale included in the analysis.</td><td>Allows detection of broader events but may merge slow trends with events.</td></tr>
+              <tr><td>4.3. Number of Scales</td><td>Number of scales evaluated between the minimum and maximum scale.</td><td>Provides higher multiscale resolution at greater computational cost.</td></tr>
+              <tr><td>4.4. CWT Amplitude Quantile</td><td>Quantile used as a threshold for local maxima.</td><td>Makes detection more selective by retaining only stronger wavelet structures.</td></tr>
+              <tr><td>4.5. Ridge Connection Tolerance</td><td>Temporal tolerance \(\epsilon\) for connecting maxima across scales.</td><td>Allows ridges to connect despite small time shifts; if too large, it may join distinct structures.</td></tr>
+              <tr><td>4.6. Min Ridge Length</td><td>Minimum number of connected scales.</td><td>Requires stronger multiscale coherence and reduces noise-driven detections.</td></tr>
+              <tr><td>4.7. Min Event Distance</td><td>Minimum distance between detected events.</td><td>Merges nearby events and helps prevent duplicate detections.</td></tr>
+              <tr><td>4.8. Metric Window Around Event</td><td>Local time window used to refine onset, peak, offset, and AUC.</td><td>Larger windows can capture longer events but may include neighboring events.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s5" class="section">
+        <h2>5. Baseline</h2>
+        <p>
+          In this module, the baseline is applied after wavelet events are detected. It affects amplitude, \(\Delta F/F_0\), FWHM, FWHP, AUC, and amplitude-based event classification.
+        </p>
+        <div class="details-grid">
+          <details open><summary>5.1. Standard definition</summary><p>Mean of the initial fraction of the trace. Mathematically: \(b=\frac{1}{m}\sum_{i=1}^{m}x_i\).</p></details>
+          <details><summary>5.2. Low-fluorescence region baseline</summary><p>Uses low fluorescence values to approximate the resting state. Useful when the beginning of the trace is not representative of baseline activity.</p></details>
+          <details><summary>5.3. Rolling percentile baseline</summary><p>Calculates a dynamic baseline \(b(t)\) using a moving window and a selected percentile.</p></details>
+          <details><summary>5.4. Event-specific baseline: left-right FFT minima</summary><p>For each detected wavelet peak, identifies FFT-smoothed minima on the left and right. The line between these minima defines the local baseline for that event.</p></details>
+          <details><summary>5.5–5.7. Median / Mean / Min</summary><p>Legacy options and global minimum references. Useful for comparison, but less adaptive to local changes in the trace.</p></details>
+        </div>
+        <div class="formula-card">
+          <h3>Amplitude Above Baseline</h3>
+          <p class="math">\[\text{Amplitude Above Baseline}_j = x(t_{p,j})-b_j\]</p>
+          <p>For an event-specific baseline, \(b_j\) is the value of the local baseline line at the event peak time.</p>
+        </div>
+      </section>
+
+      <section id="s6" class="section soft">
+        <h2>6. Biological Event Filters</h2>
+        <p>
+          These filters do not alter the wavelet map itself. Instead, they classify detected candidates according to biological relevance or signal-quality criteria.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Filter</th><th>Requirement</th><th>Impact</th></tr></thead>
+            <tbody>
+              <tr><td>6.1. Amplitude Above Baseline (min)</td><td>\(x(t_p)-b(t_p)\ge\) threshold.</td><td>Weak events may be classified as low confidence or rejected.</td></tr>
+              <tr><td>6.2. Ridge Length for Accepted Status</td><td>Minimum ridge length required for Accepted status.</td><td>Requires multiscale coherence.</td></tr>
+              <tr><td>6.3. CWT Amplitude (min)</td><td>Minimum wavelet amplitude.</td><td>Removes weak ridges.</td></tr>
+              <tr><td>6.4. Events Used in Summary Metrics</td><td>Defines whether summary metrics use Accepted events only, Accepted + low confidence events, or all events.</td><td>Changes Summary Metrics, AUC Summary, and Metric Plots.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Event_Status</h3>
+        <div class="table-wrap small-table">
+          <table>
+            <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Accepted</td><td>Meets amplitude, ridge-length, and CWT-amplitude criteria.</td></tr>
+              <tr><td>Low confidence: weak amplitude</td><td>Amplitude above baseline is positive but below the selected threshold.</td></tr>
+              <tr><td>Low confidence: short ridge</td><td>The candidate is not present across a sufficient number of scales.</td></tr>
+              <tr><td>Low confidence: weak CWT ridge</td><td>Maximum CWT amplitude is below the selected threshold.</td></tr>
+              <tr><td>Rejected: below baseline</td><td>The peak does not exceed the baseline.</td></tr>
+              <tr><td>Rejected: invalid amplitude</td><td>A valid amplitude could not be calculated.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s7" class="section">
+        <h2>7. Graph Display Options</h2>
+        <div class="table-wrap small-table">
+          <table>
+            <thead><tr><th>Option</th><th>Function</th></tr></thead>
+            <tbody>
+              <tr><td>7.1. Full Width at Half Prominence (FWHP)</td><td>Shows or hides FWHP segments in the event plot.</td></tr>
+              <tr><td>7.2. Show non-accepted event lines</td><td>Shows vertical lines for low-confidence or rejected candidate events.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s8" class="section soft">
+        <h2>8. SummaryData</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Output</th><th>What it shows</th><th>What to review</th></tr></thead>
+            <tbody>
+              <tr><td>8.1. Dataset Summary</td><td>Number of ROIs and observations.</td><td>Consistency with the input file.</td></tr>
+              <tr><td>8.2. Dataset</td><td>Complete interactive dataset table.</td><td>Missing values or incorrectly positioned columns.</td></tr>
+              <tr><td>8.3. Selected ROI Trace</td><td>Raw trace for the selected ROI.</td><td>Noise, drift, saturation, or visually apparent events.</td></tr>
+              <tr><td>8.4. Selected ROI Descriptive Summary</td><td>Numerical summary of the signal.</td><td>Unexpected ranges, flat traces, or outliers.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s9" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Primary output</p>
+          <h2>9. Peaks</h2>
+        </div>
+        <p>
+          This tab displays the signal with detected events, global and event-specific AUC, and results tables.
+        </p>
+        <h3>How to read the event plot</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Visual element</th><th>What it represents</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>Signal line</td><td>Calcium trace for the selected ROI.</td><td>Temporal context for detected events.</td></tr>
+              <tr><td>Light green shaded area</td><td>Total global AUC above the selected baseline, or local event-specific area.</td><td>Integrated signal activity relative to the baseline.</td></tr>
+              <tr><td>Yellow shaded area</td><td>Event_AUC within the onset-to-offset interval of each event.</td><td>Integrated area for each detected transient.</td></tr>
+              <tr><td>Black dashed line</td><td>Static, dynamic, or local baseline.</td><td>Reference used for amplitude and AUC calculations.</td></tr>
+              <tr><td>Peak point</td><td>Peak_Time and Peak_Amplitude.</td><td>Local maximum associated with the wavelet event.</td></tr>
+              <tr><td>Blue vertical segment</td><td>Amplitude Above Baseline.</td><td>Peak height above baseline.</td></tr>
+              <tr><td>Red vertical segment</td><td>Prominence.</td><td>Difference between the peak and the left FFT-smoothed valley.</td></tr>
+              <tr><td>Blue horizontal segment</td><td>FWHM.</td><td>Width at half of the baseline-corrected amplitude.</td></tr>
+              <tr><td>Optional red horizontal segment</td><td>FWHP.</td><td>Width at half prominence.</td></tr>
+              <tr><td>Vertical event lines</td><td>Wavelet_Event_Time.</td><td>Temporal center of the detected ridge.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>9.1. AUC Summary</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Column</th><th>Definition</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>Events_Used</td><td>Number of events included according to <code>Events Used in Summary Metrics</code>.</td><td>Verify whether the summary includes Accepted events only or all candidates.</td></tr>
+              <tr><td>Baseline_Method</td><td>Selected baseline method.</td><td>Should be reported with the results.</td></tr>
+              <tr><td>Baseline</td><td>Baseline value or label.</td><td>Reference used for AUC and amplitude calculations.</td></tr>
+              <tr><td>Total_AUC_Global_Above_Baseline</td><td>\(\int \max(x(t)-b(t),0)dt\) across the full trace.</td><td>Global integrated activity.</td></tr>
+              <tr><td>Total_Event_AUC</td><td>Sum of Event_AUC across selected events.</td><td>Integrated activity only within detected events.</td></tr>
+              <tr><td>Mean_Event_AUC</td><td>Mean Event_AUC.</td><td>Typical area per event.</td></tr>
+              <tr><td>Median, Min, Max Event_AUC</td><td>Distribution of event-level areas.</td><td>Identifies outlying events or variability across events.</td></tr>
+              <tr><td>Frequency</td><td>Events divided by total recording duration.</td><td>Frequency of detected calcium transients.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>9.2. Event-Level Metrics</h3>
+        <p>
+          This table contains one row per detected candidate. It is the most complete table for event-level auditing.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Column</th><th>Mathematical / operational definition</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>Event_ID</td><td>Sequential identifier.</td><td>Allows an event to be located across tables and plots.</td></tr>
+              <tr><td>Wavelet_Event_Time</td><td>Central time of the strongest ridge.</td><td>Time identified by the wavelet detector.</td></tr>
+              <tr><td>Onset_Time</td><td>Local minimum before the peak within the metric window.</td><td>Estimated onset of the transient.</td></tr>
+              <tr><td>Peak_Time</td><td>Time of the local maximum within the metric window.</td><td>Physical peak time used for metric calculations.</td></tr>
+              <tr><td>Offset_Time</td><td>Local minimum after the peak within the metric window.</td><td>Approximate end of the event.</td></tr>
+              <tr><td>Peak_Amplitude</td><td>Signal value at Peak_Time.</td><td>Absolute peak height.</td></tr>
+              <tr><td>Baseline</td><td>Baseline value used for the event.</td><td>Reference for amplitude and \(\Delta F/F_0\).</td></tr>
+              <tr><td>Baseline_Method_For_Event</td><td>Baseline method used for the event.</td><td>Enables event-level baseline auditing.</td></tr>
+              <tr><td>Baseline_Type</td><td>static, dynamic, or event_specific.</td><td>Type of reference used.</td></tr>
+              <tr><td>Event_Baseline_Left/Right Time/Value</td><td>Points defining the local baseline line.</td><td>Relevant for event-specific baseline methods.</td></tr>
+              <tr><td>Amplitude_Above_Baseline</td><td>\(x(t_p)-b_j\).</td><td>Baseline-corrected magnitude of the event.</td></tr>
+              <tr><td>DeltaF_over_F0_Peak</td><td>\((x(t_p)-b_j)/b_j\).</td><td>Relative change with respect to baseline.</td></tr>
+              <tr><td>Prominence</td><td>\(x(t_p)-v_{left}\), where \(v_{left}\) is the FFT-smoothed valley before the peak.</td><td>Local peak contrast.</td></tr>
+              <tr><td>Prominence_Reference / Time</td><td>Value and time of the valley used to calculate prominence.</td><td>Allows verification that the local reference is biologically and analytically reasonable.</td></tr>
+              <tr><td>FWHP</td><td>Width between crossings of \(x(t_p)-\mathrm{Prominence}/2\).</td><td>Duration based on prominence.</td></tr>
+              <tr><td>FWHM</td><td>Width between crossings of \(b_j+[x(t_p)-b_j]/2\).</td><td>Duration based on baseline.</td></tr>
+              <tr><td>Peak_Rise_Time</td><td>\(t_p-t_{onset}\).</td><td>Rise time.</td></tr>
+              <tr><td>Transient_Occurrence_Time / Onset</td><td>Onset used for metric calculations.</td><td>Beginning of the transient.</td></tr>
+              <tr><td>Rise_Rate</td><td>\((x(t_p)-b_j)/(t_p-t_{onset})\).</td><td>Rate of signal increase.</td></tr>
+              <tr><td>Event_AUC</td><td>Area above baseline between onset and offset.</td><td>Integrated calcium burden per event.</td></tr>
+              <tr><td>Ridge_Length</td><td>Number of connected maxima across scales.</td><td>Multiscale coherence; larger values are generally more reliable.</td></tr>
+              <tr><td>Max_CWT_Amplitude</td><td>Maximum wavelet amplitude along the ridge.</td><td>Strength of the event in the time-scale domain.</td></tr>
+              <tr><td>Mean_Scale, Min_Scale, Max_Scale</td><td>Summary of scales represented in the ridge.</td><td>Describes the multiscale temporal width of the event.</td></tr>
+              <tr><td>Event_Status</td><td>Accepted, Low confidence, or Rejected.</td><td>Final classification of the candidate event.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s10" class="section soft">
+        <div class="section-heading">
+          <p class="eyebrow">Baseline robustness</p>
+          <h2>10. Baseline Sensitivity Analysis</h2>
+        </div>
+        <p>
+          This tab retains the same wavelet candidates and recalculates metrics using multiple baseline definitions. It therefore evaluates whether biological interpretation depends on the selected baseline.
+        </p>
+        <div class="formula-card">
+          <h3>Coefficient of variation used for automatic interpretation</h3>
+          <p class="math">\[CV(\%)=100\cdot\frac{\mathrm{sd}(z_1,z_2,\ldots,z_m)}{\mathrm{mean}(|z_1|,|z_2|,\ldots,|z_m|)}\]</p>
+          <p>The application applies this principle primarily to amplitude, AUC, and FWHM because these metrics are typically sensitive to baseline selection.</p>
+        </div>
+        <h3>Sensitivity table and plot</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Plot metric</th><th>What it compares</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>Number_of_Wavelet_Events</td><td>Number of events included in the summary.</td><td>Changes indicate that baseline affects event filters or event status.</td></tr>
+              <tr><td>Frequency</td><td>Events per total recording duration.</td><td>Summarizes changes in event counts.</td></tr>
+              <tr><td>Mean_Amplitude_Above_Baseline</td><td>Mean of \(x(t_p)-b_j\).</td><td>Directly sensitive to baseline selection.</td></tr>
+              <tr><td>Mean_DeltaF_over_Baseline_Peak</td><td>Mean of \((x(t_p)-b_j)/b_j\).</td><td>Highly sensitive when \(b_j\) changes substantially or is small.</td></tr>
+              <tr><td>Mean_Prominence</td><td>Mean prominence using the local FFT valley.</td><td>May be more stable than amplitude above baseline.</td></tr>
+              <tr><td>Mean_FWHP</td><td>Mean width at half prominence.</td><td>Duration based on local contrast.</td></tr>
+              <tr><td>Mean_FWHM</td><td>Mean width at half maximum relative to baseline.</td><td>May vary with the baseline definition.</td></tr>
+              <tr><td>Mean_Event_AUC</td><td>Mean AUC per event.</td><td>Summarizes the typical integrated calcium burden of each transient.</td></tr>
+              <tr><td>Total_Event_AUC</td><td>Sum of areas across selected events.</td><td>Changes with both baseline choice and included events.</td></tr>
+              <tr><td>Total_AUC_Global_Above_Baseline</td><td>AUC across the full trace.</td><td>Global activity; sensitive to dynamic versus static baseline definitions.</td></tr>
+              <tr><td>Mean_CWT_Amplitude</td><td>Mean wavelet amplitude for events used in the summary.</td><td>Should remain relatively stable when the event set does not change.</td></tr>
+              <tr><td>Mean_Ridge_Length</td><td>Mean ridge length.</td><td>Stability suggests consistent wavelet detection.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="notice">
+          <strong>Recommended interpretation:</strong> if wavelet-specific metrics such as <code>Mean_CWT_Amplitude</code> and <code>Mean_Ridge_Length</code> remain stable while amplitude or AUC changes, the event is robustly detected, but its intensity quantification depends on the baseline definition.
+        </div>
+      </section>
+
+      <section id="s11" class="section">
+        <h2>11. Metrics</h2>
+        <h3>11.1. Summary Metrics</h3>
+        <p>
+          Aggregated table for the events included according to <code>Events Used in Summary Metrics</code>. It is useful for reporting ROI-level results.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Metric family</th><th>Columns</th><th>What they summarize</th></tr></thead>
+            <tbody>
+              <tr><td>Event detection</td><td>Number_of_Wavelet_Events, Frequency</td><td>Event count and frequency.</td></tr>
+              <tr><td>Amplitude</td><td>Mean_Amplitude_Above_Baseline, Mean_DeltaF_over_F0_Peak, Mean_Prominence</td><td>Average event magnitude.</td></tr>
+              <tr><td>Time-domain</td><td>Mean_FWHP, Mean_FWHM, Mean_Peak_Rise_Time, Mean_Onset</td><td>Event duration and timing.</td></tr>
+              <tr><td>AUC</td><td>Total_AUC_Global_Above_Baseline, Total_Event_AUC, Mean_Event_AUC</td><td>Global and event-specific integrated activity.</td></tr>
+              <tr><td>Wavelet ridge</td><td>Mean_Ridge_Length, Mean_CWT_Amplitude, Mean_Scale</td><td>Multiscale coherence and signal strength.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>11.2. Transient Metrics</h3>
+        <p>
+          FFT-style transient metrics adapted to wavelet-detected events. These include Amplitude, Baseline_Event, Baseline_at_peak, DeltaF_over_F0_Peak, Peak_Occurence_Time, Prominence, FWHP, FWHM, Peak_Rise_Time, Transient_Occurrence_Time, and Rise_Rate.
+        </p>
+        <h3>11.3. Trace Metrics</h3>
+        <p>
+          Summarizes the complete ROI trace: initial onset, frequency, baseline method, baseline, number of peaks, total global AUC, and total event AUC.
+        </p>
+      </section>
+
+      <section id="s12" class="section soft">
+        <h2>12. Metric Plots</h2>
+        <p>
+          The plot groups metrics by conceptual family. This prevents values with different units, such as event counts, durations, amplitudes, AUC values, and CWT coefficients, from being compared on the same axis.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Panel</th><th>Typical metrics</th><th>How to interpret it</th></tr></thead>
+            <tbody>
+              <tr><td>Event detection</td><td>Number_of_Wavelet_Events, Frequency</td><td>Event number and frequency.</td></tr>
+              <tr><td>Time-domain metrics</td><td>Mean_Onset, Peak time, Rise time, FWHP, FWHM</td><td>Event timing and duration.</td></tr>
+              <tr><td>Signal amplitude metrics</td><td>Amplitude above baseline, DeltaF/Baseline, Prominence, Rise rate</td><td>Signal intensity and rate of increase.</td></tr>
+              <tr><td>Wavelet ridge metrics</td><td>CWT amplitude, Ridge length, Mean scale</td><td>Multiscale strength and coherence.</td></tr>
+              <tr><td>Area under the curve</td><td>Mean Event AUC, Total Event AUC, Total Global AUC</td><td>Integrated activity.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="s13" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Time-scale map</p>
+          <h2>13. Wavelet Analysis</h2>
+        </div>
+        <p>
+          The <strong>Wavelet Analysis</strong> tab displays a CWT amplitude map. The x-axis represents time, the y-axis represents scale, and color represents \(|W(s,\tau)|\). Points indicate local maxima used as candidates for ridge construction.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Element</th><th>What it means</th><th>Interpretation</th></tr></thead>
+            <tbody>
+              <tr><td>X-axis: Time</td><td>Recording time.</td><td>Indicates when an event occurs.</td></tr>
+              <tr><td>Y-axis: Scale</td><td>Temporal width of the wavelet.</td><td>Small scales respond to narrow events; large scales respond to broad events.</td></tr>
+              <tr><td>Color / Fill: CWT amplitude</td><td>\(|W(s,\tau)|\).</td><td>Bright regions indicate event-like structure.</td></tr>
+              <tr><td>Local-maxima points</td><td>Scale-specific maxima exceeding the quantile threshold.</td><td>These are the nodes connected to form ridges.</td></tr>
+              <tr><td>Implicit ridges</td><td>Sequences of connected maxima.</td><td>A long, strong ridge suggests a more reliable event.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warning">
+          <strong>Warning sign:</strong> if the CWT map shows many scattered small structures without continuity across scales, increase the CWT quantile threshold, increase the minimum ridge length, or inspect the trace for excessive noise.
+        </div>
+      </section>
+
+      <section id="workflow" class="section closing">
+        <div class="section-heading">
+          <p class="eyebrow">Practical recommendation</p>
+          <h2>Recommended Workflow</h2>
+        </div>
+        <ol class="workflow-list">
+          <li>Inspect the selected ROI in <strong>8. SummaryData</strong>.</li>
+          <li>Begin with a broad scale range, for example minimum scale 2 and maximum scale 40.</li>
+          <li>Inspect <strong>13. Wavelet Analysis</strong> to confirm that visually apparent events correspond to strong CWT structures.</li>
+          <li>Adjust <strong>CWT Amplitude Quantile</strong>, <strong>Ridge Connection Tolerance</strong>, and <strong>Min Ridge Length</strong>.</li>
+          <li>Use <strong>6. Biological Event Filters</strong> to classify candidate events.</li>
+          <li>Review <strong>10. Baseline Sensitivity Analysis</strong> before reporting amplitude, AUC, or FWHM.</li>
+          <li>Always report the minimum and maximum scales, number of scales, CWT quantile, minimum ridge length, baseline method, and included event classes.</li>
+        </ol>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>CalciumInsights — Wavelet Ridgewalking guide.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

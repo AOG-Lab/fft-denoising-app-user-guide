@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CalciumInsights | Detailed User Guide</title>
+  <meta name="description" content="Detailed guide for interpreting CalciumInsights results: FFT + Baseline Analysis and Wavelet Ridgewalking." />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    window.MathJax = { tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' } };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="CalciumInsights home">
+        <span class="brand-mark">Ca</span>
+        <span class="brand-name">CalciumInsights</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="fft-guide-english-version.html">FFT guide</a></li>
+        <li><a href="wavelet-guide-english-version.html">Wavelet guide</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero-panel" aria-labelledby="page-title">
+      <div class="hero-text">
+        <p class="eyebrow">Interpretive documentation for users and reviewers</p>
+        <h1 id="page-title">Detailed CalciumInsights Guide for Calcium Transient Analysis</h1>
+        <p class="lead">
+          This guide explains not only where to click, but also what each table, plot, and metric means when running the <strong>FFT + Baseline Analysis</strong> and <strong>Wavelet Ridgewalking</strong> modules.
+        </p>
+        <div class="hero-actions" aria-label="Module links">
+          <a class="button primary" href="fft-guide.html">Open FFT guide</a>
+          <a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Guide structure">
+        <h2>What users will find</h2>
+        <ol class="compact-list">
+          <li>Mathematical definitions for each metric.</li>
+          <li>Visual interpretation of each plot.</li>
+          <li>Practical rules for identifying sensitivity to baseline choice, smoothing, and detection method.</li>
+        </ol>
+      </aside>
+    </section>
+  </header>
+
+  <main id="main" class="page-shell">
+    <aside class="toc" aria-label="Table of contents">
+      <strong>Contents</strong>
+      <a href="#overview">1. Overview</a>
+      <a href="#notation">2. Common notation</a>
+      <a href="#modules">3. Module guides</a>
+      <a href="#baseline">4. Shared baselines</a>
+      <a href="#how-to-use">5. How to use this guide</a>
+      <a href="#publish">6. Publish on GitHub</a>
+    </aside>
+
+    <div class="content">
+      <section id="overview" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Purpose</p>
+          <h2>1. Overview</h2>
+        </div>
+        <p>
+          <strong>CalciumInsights</strong> analyzes calcium signals for each region of interest, or ROI. The application enables users to upload a time-by-signal matrix, select an ROI, detect events, estimate the baseline, and calculate metrics including amplitude, prominence, width, frequency, area under the curve, and rise times.
+        </p>
+        <p>
+          This documentation follows the numbering displayed in the application. When a user encounters an output such as <code>Baseline Sensitivity Analysis</code>, <code>Grid assessment for candidate FFT fractions</code>, <code>Event-Level Metrics</code>, or <code>Wavelet Analysis</code>, they can navigate to the corresponding section to understand what is shown and how to interpret it.
+        </p>
+        <div class="info">
+          <strong>Core concept:</strong> calcium metrics depend on methodological decisions. The application therefore compares baseline definitions, FFT fractions, and wavelet-based detections to help distinguish robust conclusions from conclusions that are sensitive to the selected method.
+        </div>
+      </section>
+
+      <section id="notation" class="section soft">
+        <div class="section-heading">
+          <p class="eyebrow">Shared mathematical language</p>
+          <h2>2. Common notation</h2>
+        </div>
+        <div class="cards two">
+          <article class="formula-card">
+            <h3>Signal and baseline</h3>
+            <p>We use:</p>
+            <p class="math">\[x_i = x(t_i) \quad \text{observed signal at time } t_i\]</p>
+            <p class="math">\[\hat{x}_i = \hat{x}(t_i) \quad \text{smoothed or reconstructed signal}\]</p>
+            <p class="math">\[b_i = b(t_i) \quad \text{static, dynamic, or local baseline}\]</p>
+          </article>
+          <article class="formula-card">
+            <h3>Core metrics</h3>
+            <p class="math">\[A_i = x(t_{p,i}) - b(t_{p,i})\]</p>
+            <p>Amplitude above baseline at the peak of event \(i\).</p>
+            <p class="math">\[\Delta F/F_0 = \frac{x(t_{p,i}) - b(t_{p,i})}{b(t_{p,i})}\]</p>
+            <p>Relative fluorescence change. In the application, the <code>Baseline</code> term serves as \(F_0\).</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="modules" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Active modules</p>
+          <h2>3. Module guides</h2>
+        </div>
+        <div class="cards two">
+          <article class="module-card accent-blue">
+            <p class="module-label">Module 1</p>
+            <h3>FFT + Baseline Analysis</h3>
+            <p>
+              Covers FFT smoothing, peak detection, baseline estimation, AUC, FWHM/FWHP, optional sigmoid models, Fourier Analysis, Baseline Sensitivity Analysis, and FFT Selection Criteria.
+            </p>
+            <ul class="checklist">
+              <li>Meaning of <code>f</code>, <code>k_keep</code>, <code>corr_raw_smooth</code>, and <code>retained_power_frac</code>.</li>
+              <li>How to interpret residuals, the periodogram, and FFT selection criteria.</li>
+              <li>What each facet in the baseline sensitivity plot represents.</li>
+            </ul>
+            <a class="button inline" href="fft-guide.html">Open FFT guide</a>
+          </article>
+
+          <article class="module-card accent-green">
+            <p class="module-label">Module 2</p>
+            <h3>Wavelet Ridgewalking</h3>
+            <p>
+              Explains how the application detects events as multiscale structures, connects local maxima into ridges, and calculates biologically relevant metrics after baseline correction.
+            </p>
+            <ul class="checklist">
+              <li>Meaning of scale, CWT amplitude, ridge length, and event status.</li>
+              <li>How to interpret the CWT map and the detected-event plot.</li>
+              <li>How to interpret global AUC, Event_AUC, and metric families.</li>
+            </ul>
+            <a class="button inline" href="wavelet-guide.html">Open Wavelet guide</a>
+          </article>
+        </div>
+      </section>
+
+      <section id="baseline" class="section soft">
+        <div class="section-heading">
+          <p class="eyebrow">Shared terminology</p>
+          <h2>4. Shared baselines</h2>
+        </div>
+        <p>
+          Both modules use equivalent baseline labels so that FFT- and Wavelet-derived metrics can be compared consistently.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Baseline</th><th>Concept</th><th>When it is useful</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Standard definition</td><td>Mean of an initial fraction of the signal.</td><td>Recordings in which the beginning of the trace represents the resting state.</td></tr>
+              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from low fluorescence values.</td><td>Signals with frequent events but identifiable low-fluorescence intervals.</td></tr>
+              <tr><td>Rolling percentile baseline</td><td>Dynamic baseline calculated using a moving window and percentile.</td><td>Long recordings with slow baseline drift.</td></tr>
+              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline defined between minima before and after the peak.</td><td>Events with a variable local baseline.</td></tr>
+              <tr><td>Median signal (legacy)</td><td>Median of the full signal.</td><td>Retrospective comparison or rapid exploratory analysis.</td></tr>
+              <tr><td>Mean signal (legacy)</td><td>Mean of the full signal.</td><td>Retrospective comparison; sensitive to large peaks.</td></tr>
+              <tr><td>Min</td><td>Observed minimum.</td><td>Simple lower reference; may overestimate amplitudes when downward noise is present.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="how-to-use" class="section">
+        <div class="section-heading">
+          <p class="eyebrow">Practical use</p>
+          <h2>5. How to use this guide</h2>
+        </div>
+        <div class="cards three">
+          <article class="mini-card">
+            <h3>1. Configure the application</h3>
+            <p>Select the dataset, ROI, baseline method, and detection parameters.</p>
+          </article>
+          <article class="mini-card">
+            <h3>2. Run and inspect</h3>
+            <p>Review the tables and plots generated by the selected module.</p>
+          </article>
+          <article class="mini-card">
+            <h3>3. Search for the exact output name</h3>
+            <p>Use the module table of contents to locate the metric or output displayed in the application.</p>
+          </article>
+        </div>
+      </section>
+
+    
+
+  <footer class="footer">
+    <p>CalciumInsights — Detailed User Guide.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

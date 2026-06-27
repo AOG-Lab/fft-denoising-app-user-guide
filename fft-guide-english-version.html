@@ -1,572 +1,529 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FFT + Baseline Analysis | CalciumInsights</title>
-  <meta name="description" content="Detailed guide to the FFT + Baseline Analysis module in CalciumInsights." />
-  <link rel="stylesheet" href="style.css" />
-  <script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>FFT + Baseline Analysis | CalciumInsights</title>
+<meta content="Detailed guide to the FFT + Baseline Analysis module in CalciumInsights." name="description"/>
+<link href="style.css" rel="stylesheet"/>
+<script>
     window.MathJax = { tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' } };
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="guide-hero">
-    <nav class="topbar" aria-label="Main navigation">
-      <a class="brand" href="index.html" aria-label="CalciumInsights home">
-        <span class="brand-mark">Ca</span>
-        <span class="brand-name">CalciumInsights</span>
-      </a>
-      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="fft-guide.html" aria-current="page">FFT guide</a></li>
-        <li><a href="wavelet-guide.html">Wavelet guide</a></li>
-      </ul>
-    </nav>
-    <div class="hero-content">
-      <p class="eyebrow">Module 1</p>
-      <h1>FFT + Baseline Analysis — Detailed Results Guide</h1>
-      <p class="lead">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="guide-hero">
+<nav aria-label="Main navigation" class="topbar">
+<a aria-label="CalciumInsights home" class="brand" href="index.html">
+<span class="brand-mark">Ca</span>
+<span class="brand-name">CalciumInsights</span>
+</a>
+<button aria-expanded="false" aria-label="Open navigation" class="nav-toggle" type="button">☰</button>
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+<li><a aria-current="page" href="fft-guide.html">FFT guide</a></li>
+<li><a href="wavelet-guide.html">Wavelet guide</a></li>
+</ul>
+</nav>
+<div class="hero-content">
+<p class="eyebrow">Module 1</p>
+<h1>FFT + Baseline Analysis — Detailed Results Guide</h1>
+<p class="lead">
         This page explains every control, table, and plot in the FFT module. It includes mathematical notation, metric interpretation, and detailed explanations of <strong>Baseline Sensitivity Analysis</strong> and <strong>FFT Selection Criteria</strong>.
       </p>
-    </div>
-  </header>
-
-  <main id="main" class="page-shell">
-    <aside class="toc" aria-label="Table of contents">
-      <strong>FFT guide</strong>
-      <a href="#purpose">Module purpose</a>
-      <a href="#notation">0. Mathematical notation</a>
-      <a href="#s1">1. Example Data</a>
-      <a href="#s2">2. Dataset</a>
-      <a href="#s3">3. ROI</a>
-      <a href="#s4">4. FFT fraction</a>
-      <a href="#s5">5. Find Peaks</a>
-      <a href="#s6">6. Baseline</a>
-      <a href="#s7">7. AUC</a>
-      <a href="#s8">8. Raw Data</a>
-      <a href="#s9">9. FWHM</a>
-      <a href="#s10">10. Sigmoid modeling</a>
-      <a href="#s11">11. Downloads</a>
-      <a href="#s12">12. SummaryData</a>
-      <a href="#s13">13. Peaks</a>
-      <a href="#s133">13.3 Fourier Analysis</a>
-      <a href="#s14">14. Baseline Sensitivity</a>
-      <a href="#s15">15. FFT Selection Criteria</a>
-      <a href="#workflow">Recommended workflow</a>
-    </aside>
-
-    <div class="content">
-      <section id="purpose" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Method overview</p>
-          <h2>Purpose of the FFT Module</h2>
-        </div>
-        <p>
+</div>
+</header>
+<main class="page-shell" id="main">
+<aside aria-label="Table of contents" class="toc">
+<strong>FFT guide</strong>
+<a href="#purpose">Module purpose</a>
+<a href="#notation">0. Mathematical notation</a>
+<a href="#s1">1. Example Data</a>
+<a href="#s2">2. Dataset</a>
+<a href="#s3">3. ROI</a>
+<a href="#s4">4. FFT fraction</a>
+<a href="#s5">5. Find Peaks</a>
+<a href="#s6">6. Baseline</a>
+<a href="#s7">7. AUC</a>
+<a href="#s8">8. Raw Data</a>
+<a href="#s9">9. FWHM</a>
+<a href="#s10">10. Sigmoid modeling</a>
+<a href="#s11">11. Downloads</a>
+<a href="#s12">12. SummaryData</a>
+<a href="#s13">13. Peaks</a>
+<a href="#s133">13.3 Fourier Analysis</a>
+<a href="#s14">14. Baseline Sensitivity</a>
+<a href="#s15">15. FFT Selection Criteria</a>
+<a href="#workflow">Recommended workflow</a>
+</aside>
+<div class="content">
+<section class="section" id="purpose">
+<div class="section-heading">
+<p class="eyebrow">Method overview</p>
+<h2>Purpose of the FFT Module</h2>
+</div>
+<p>
           The <strong>FFT + Baseline Analysis</strong> module smooths calcium signals using a low-frequency reconstruction based on the Fast Fourier Transform, detects peaks in the smoothed signal, and calculates metrics for each calcium transient. It then evaluates how these metrics change when the baseline definition is modified.
         </p>
-        <p>
+<p>
           In practical terms, the module addresses three questions: <strong>which events are present</strong>, <strong>how large each event is</strong>, and <strong>how robust those conclusions are to the selected baseline and smoothing settings</strong>.
         </p>
-        <div class="info">
-          <strong>Important:</strong> FFT smoothing should not create artificial events. It should reduce high-frequency noise while preserving the timing, amplitude, and overall morphology of biologically plausible calcium transients.
+<div class="info">
+<strong>Important:</strong> FFT smoothing should not create artificial events. It should reduce high-frequency noise while preserving the timing, amplitude, and overall morphology of biologically plausible calcium transients.
         </div>
-      </section>
-
-      <section id="notation" class="section soft">
-        <div class="section-heading">
-          <p class="eyebrow">Before interpreting results</p>
-          <h2>0. Mathematical notation used in this guide</h2>
-        </div>
-        <div class="cards two">
-          <article class="formula-card">
-            <h3>Raw and smoothed signals</h3>
-            <p>For a selected ROI, the application works with a time series:</p>
-            <p class="math">\[x = (x_1, x_2, \ldots, x_n), \qquad x_i = x(t_i)\]</p>
-            <p>After FFT smoothing, the reconstructed signal is:</p>
-            <p class="math">\[\hat{x} = (\hat{x}_1, \hat{x}_2, \ldots, \hat{x}_n)\]</p>
-            <p>The difference between the two signals is the residual:</p>
-            <p class="math">\[r_i = x_i - \hat{x}_i\]</p>
-          </article>
-          <article class="formula-card">
-            <h3>Event, baseline, and amplitude</h3>
-            <p>For event \(j\), let \(t_{p,j}\) denote the peak time and let \(b(t)\) denote the baseline.</p>
-            <p class="math">\[\text{Amplitude}_j = \hat{x}(t_{p,j})\]</p>
-            <p class="math">\[\text{Amplitude Above Baseline}_j = \hat{x}(t_{p,j}) - b(t_{p,j})\]</p>
-            <p>For dynamic baselines, \(b(t)\) varies over time. For static baselines, \(b(t)=b\) for all \(t\).</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="s1" class="section">
-        <h2>1. Example Data</h2>
-        <p>
+</section>
+<section class="section soft" id="notation">
+<div class="section-heading">
+<p class="eyebrow">Before interpreting results</p>
+<h2>0. Mathematical notation used in this guide</h2>
+</div>
+<div class="cards two">
+<article class="formula-card">
+<h3>Raw and smoothed signals</h3>
+<p>For a selected ROI, the application works with a time series:</p>
+<p class="math">\[x = (x_1, x_2, \ldots, x_n), \qquad x_i = x(t_i)\]</p>
+<p>After FFT smoothing, the reconstructed signal is:</p>
+<p class="math">\[\hat{x} = (\hat{x}_1, \hat{x}_2, \ldots, \hat{x}_n)\]</p>
+<p>The difference between the two signals is the residual:</p>
+<p class="math">\[r_i = x_i - \hat{x}_i\]</p>
+</article>
+<article class="formula-card">
+<h3>Event, baseline, and amplitude</h3>
+<p>For event \(j\), let \(t_{p,j}\) denote the peak time and let \(b(t)\) denote the baseline.</p>
+<p class="math">\[\text{Amplitude}_j = \hat{x}(t_{p,j})\]</p>
+<p class="math">\[\text{Amplitude Above Baseline}_j = \hat{x}(t_{p,j}) - b(t_{p,j})\]</p>
+<p>For dynamic baselines, \(b(t)\) varies over time. For static baselines, \(b(t)=b\) for all \(t\).</p>
+</article>
+</div>
+</section>
+<section class="section" id="s1">
+<h2>1. Example Data</h2>
+<p>
           Determines whether the application uses internally generated simulated data or expects an external input file. Use <strong>Yes</strong> for demonstrations and rapid testing. Use <strong>No</strong> to analyze your own calcium-imaging data.
         </p>
-      </section>
-
-      <section id="s2" class="section">
-        <h2>2. Dataset</h2>
-        <p>
+</section>
+<section class="section" id="s2">
+<h2>2. Dataset</h2>
+<p>
           The dataset must contain a time column as the first column, followed by ROI or calcium-signal columns. The module accepts <code>.csv</code>, <code>.tsv</code>, and <code>.json</code> files.
         </p>
-        <pre><code>Time,ROI_1,ROI_2,ROI_3
+<pre><code>Time,ROI_1,ROI_2,ROI_3
 0.0,0.45,0.50,0.43
 0.5,0.48,0.52,0.46
 1.0,0.51,0.55,0.49</code></pre>
-        <div class="warning">
-          <strong>Recommended check:</strong> confirm that the time column is numeric, sorted in ascending order, and expressed in a consistent unit. Frequency is calculated as the number of detected events divided by the total recording duration.
+<div class="warning">
+<strong>Recommended check:</strong> confirm that the time column is numeric, sorted in ascending order, and expressed in a consistent unit. Frequency is calculated as the number of detected events divided by the total recording duration.
         </div>
-      </section>
-
-      <section id="s3" class="section">
-        <h2>3. Region of Interest (ROI)</h2>
-        <p>
+</section>
+<section class="section" id="s3">
+<h2>3. Region of Interest (ROI)</h2>
+<p>
           Selects which signal column will be analyzed. For example, if the dataset contains <code>Time, ROI_1, ROI_2, ROI_3</code>, then ROI = 1 uses <code>ROI_1</code>, ROI = 2 uses <code>ROI_2</code>, and so on.
         </p>
-      </section>
-
-      <section id="s4" class="section soft">
-        <h2>4. FFT Low-Frequency Fraction</h2>
-        <p>
+</section>
+<section class="section soft" id="s4">
+<h2>4. FFT Low-Frequency Fraction</h2>
+<p>
           This control defines the fraction of low-frequency components retained when reconstructing the signal. The goal is to remove fast components associated with noise while retaining slower components associated with calcium-transient morphology.
         </p>
-        <div class="formula-card">
-          <p>If the signal contains \(n\) time points, the number of unique positive-frequency components is:</p>
-          <p class="math">\[n_{pos}=\left\lfloor\frac{n}{2}\right\rfloor+1\]</p>
-          <p>For an FFT fraction \(f\), the application approximately calculates:</p>
-          <p class="math">\[k_{keep}=\max\left(1,\left\lfloor f\,n_{pos}\right\rfloor\right)\]</p>
-          <p>The low-frequency components \(k=0,1,\ldots,k_{keep}-1\), together with their symmetric negative-frequency components, are retained.</p>
-        </div>
-        <div class="table-wrap small-table">
-          <table>
-            <thead><tr><th>Value of \(f\)</th><th>Expected effect</th><th>Potential risk</th></tr></thead>
-            <tbody>
-              <tr><td>Low, for example 0.10</td><td>Strong smoothing.</td><td>May remove narrow peaks or reduce event amplitudes.</td></tr>
-              <tr><td>Intermediate, 0.20–0.30</td><td>Compromise between noise reduction and morphological preservation.</td><td>Should be visually validated.</td></tr>
-              <tr><td>High, 0.40–1.00</td><td>Retains more detail from the original signal.</td><td>May retain noise that could be interpreted as events.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <h3>4.1. Keep Mean (DC Component)</h3>
-        <p>
+<div class="formula-card">
+<p>If the signal contains \(n\) time points, the number of unique positive-frequency components is:</p>
+<p class="math">\[n_{pos}=\left\lfloor\frac{n}{2}\right\rfloor+1\]</p>
+<p>For an FFT fraction \(f\), the application approximately calculates:</p>
+<p class="math">\[k_{keep}=\max\left(1,\left\lfloor f\,n_{pos}\right\rfloor\right)\]</p>
+<p>The low-frequency components \(k=0,1,\ldots,k_{keep}-1\), together with their symmetric negative-frequency components, are retained.</p>
+</div>
+<div class="table-wrap small-table">
+<table>
+<thead><tr><th>Value of \(f\)</th><th>Expected effect</th><th>Potential risk</th></tr></thead>
+<tbody>
+<tr><td>Low, for example 0.10</td><td>Strong smoothing.</td><td>May remove narrow peaks or reduce event amplitudes.</td></tr>
+<tr><td>Intermediate, 0.20–0.30</td><td>Compromise between noise reduction and morphological preservation.</td><td>Should be visually validated.</td></tr>
+<tr><td>High, 0.40–1.00</td><td>Retains more detail from the original signal.</td><td>May retain noise that could be interpreted as events.</td></tr>
+</tbody>
+</table>
+</div>
+<h3>4.1. Keep Mean (DC Component)</h3>
+<p>
           The DC component represents the global mean of the signal. When retained, the smoothed signal preserves the average fluorescence level. When removed, the reconstruction may be centered around zero, altering baseline interpretation.
         </p>
-      </section>
-
-      <section id="s5" class="section">
-        <h2>5. Find Peaks Function Arguments</h2>
-        <p>These controls determine which points in the smoothed signal are accepted as peaks.</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Control</th><th>Definition</th><th>Practical interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>5.1. Peak Height (min)</td><td>Minimum peak height.</td><td>Increasing this value removes smaller peaks. Decreasing it allows weaker events but increases the risk of false positives.</td></tr>
-              <tr><td>5.2. Peak Ascent</td><td>Minimum number of ascending points before the peak.</td><td>Higher values favor peaks with a clearly defined rising phase.</td></tr>
-              <tr><td>5.3. Peak Descent</td><td>Minimum number of descending points after the peak.</td><td>Higher values favor peaks with a clearly defined decay phase.</td></tr>
-              <tr><td>5.4. Min Peak Distance</td><td>Minimum distance between consecutive peaks.</td><td>Prevents nearby fluctuations from being counted as separate events.</td></tr>
-              <tr><td>5.5. FWHP (min)</td><td>Minimum width at half prominence.</td><td>Filters out events that are excessively narrow.</td></tr>
-              <tr><td>5.6. Prominence (min)</td><td>Minimum prominence.</td><td>Filters peaks that do not rise clearly above their local valley.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="s6" class="section soft">
-        <h2>6. Baseline</h2>
-        <p>
+</section>
+<section class="section" id="s5">
+<h2>5. Find Peaks Function Arguments</h2>
+<p>These controls determine which points in the smoothed signal are accepted as peaks.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Control</th><th>Definition</th><th>Practical interpretation</th></tr></thead>
+<tbody>
+<tr><td>5.1. Peak Height (min)</td><td>Minimum peak height.</td><td>Increasing this value removes smaller peaks. Decreasing it allows weaker events but increases the risk of false positives.</td></tr>
+<tr><td>5.2. Peak Ascent</td><td>Minimum number of ascending points before the peak.</td><td>Higher values favor peaks with a clearly defined rising phase.</td></tr>
+<tr><td>5.3. Peak Descent</td><td>Minimum number of descending points after the peak.</td><td>Higher values favor peaks with a clearly defined decay phase.</td></tr>
+<tr><td>5.4. Min Peak Distance</td><td>Minimum distance between consecutive peaks.</td><td>Prevents nearby fluctuations from being counted as separate events.</td></tr>
+<tr><td>5.5. FWHP (min)</td><td>Minimum width at half prominence.</td><td>Filters out events that are excessively narrow.</td></tr>
+<tr><td>5.6. Prominence (min)</td><td>Minimum prominence.</td><td>Filters peaks that do not rise clearly above their local valley.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="section soft" id="s6">
+<h2>6. Baseline</h2>
+<p>
           The baseline is the reference level used to measure amplitude, \(\Delta F/F_0\), AUC, and event widths. Changing the baseline can alter both the number of accepted events and the resulting metric values.
         </p>
-        <div class="details-grid">
-          <details open><summary>6.1. Standard Definition</summary><p>Uses the mean of the initial fraction of the signal: \(b = \frac{1}{m}\sum_{i=1}^m \hat{x}_i\), where \(m = \lfloor n\cdot\text{Initial Trace Fraction}\rfloor\).</p></details>
-          <details><summary>6.2. Low-Fluorescence Region Baseline</summary><p>Sorts the signal values and calculates the baseline from the lower fraction of the distribution. This is useful for approximating a resting level when a stable initial interval is not available.</p></details>
-          <details><summary>6.3. Rolling Percentile Baseline</summary><p>For each time point \(t\), a local window is defined and a low percentile is calculated. This produces a dynamic baseline \(b(t)\), which is useful when the signal exhibits slow drift.</p></details>
-          <details><summary>6.4. Event-Specific Baseline: Left-Right FFT Minima</summary><p>For each event, the application identifies one local minimum before the peak and one after the peak in the smoothed signal. The line connecting these minima defines a local baseline for that event.</p></details>
-          <details><summary>6.5–6.7. Legacy / Min</summary><p><code>Median signal</code>, <code>Mean signal</code>, and <code>Min</code> are simple global reference values. They are useful for comparison but may be sensitive to transients, noise, or baseline drift.</p></details>
-        </div>
-      </section>
-
-      <section id="s7" class="section">
-        <h2>7. Area Under the Curve (AUC)</h2>
-        <p>
+<div class="details-grid">
+<details open=""><summary>6.1. Standard Definition</summary><p>Uses the mean of the initial fraction of the signal: \(b = \frac{1}{m}\sum_{i=1}^m \hat{x}_i\), where \(m = \lfloor n\cdot\text{Initial Trace Fraction}\rfloor\).</p></details>
+<details><summary>6.2. Low-Fluorescence Region Baseline</summary><p>Sorts the signal values and computes the baseline from the lower fraction. Useful to approximate rest when no stable initial interval is known.</p></details>
+<details><summary>6.3. Rolling Percentile Baseline</summary><p>For each time \(t\), takes a local window and computes a low percentile. It produces a dynamic baseline \(b(t)\), useful when slow drift is present.</p></details>
+<details><summary>6.4. Event-Specific Baseline: Left-Right FFT Minima</summary><p>For each event, finds a local minimum before the peak and another after the peak in the smoothed signal. The line between those minima defines a local event baseline.</p></details>
+<details><summary>6.5. Constant Baseline: Mean From Trace Start to Time_Onset</summary><p>Uses a constant value estimated from the beginning of the signal to the transient onset. Useful when a pre-event reference is desired.</p></details>
+<details><summary>6.6. Median Signal (Legacy)</summary><p>Uses the global signal median as a simple reference.</p></details>
+<details><summary>6.7. Mean Signal (Legacy)</summary><p>Uses the global signal mean as a simple reference.</p></details>
+<details><summary>6.8. Min</summary><p>Uses the global minimum value as the reference.</p></details>
+</div>
+</section>
+<section class="section" id="s7">
+<h2>7. Area Under the Curve (AUC)</h2>
+<p>
           Enables calculation of the area above the baseline. AUC summarizes the total time-integrated calcium signal.
         </p>
-        <div class="formula-card">
-          <p>For either a static or dynamic baseline:</p>
-          <p class="math">\[\mathrm{AUC}=\int \max\{\hat{x}(t)-b(t),0\}\,dt\]</p>
-          <p>For discretely sampled data, the application uses a trapezoidal approximation:</p>
-          <p class="math">\[\mathrm{AUC}\approx\sum_i \frac{\Delta t_i}{2}\left(y_i+y_{i+1}\right),\quad y_i=\max\{\hat{x}_i-b_i,0\}\]</p>
-        </div>
-        <p>
+<div class="formula-card">
+<p>For either a static or dynamic baseline:</p>
+<p class="math">\[\mathrm{AUC}=\int \max\{\hat{x}(t)-b(t),0\}\,dt\]</p>
+<p>For discretely sampled data, the application uses a trapezoidal approximation:</p>
+<p class="math">\[\mathrm{AUC}\approx\sum_i \frac{\Delta t_i}{2}\left(y_i+y_{i+1}\right),\quad y_i=\max\{\hat{x}_i-b_i,0\}\]</p>
+</div>
+<p>
           A large AUC may indicate higher-amplitude, longer-duration, or more frequent events. It should therefore be interpreted together with peak count, amplitude, and width metrics.
         </p>
-      </section>
-
-      <section id="s8" class="section">
-        <h2>8. Raw Data</h2>
-        <p>
+</section>
+<section class="section" id="s8">
+<h2>8. Raw Data</h2>
+<p>
           Shows or hides the raw signal overlaid on the FFT-smoothed signal. This is a visual quality-control step: the smoothed signal should follow the underlying trend without retaining excessive noise or removing biologically meaningful events.
         </p>
-      </section>
-
-      <section id="s9" class="section soft">
-        <h2>9. Full Width at Half Maximum</h2>
-        <p>
+</section>
+<section class="section soft" id="s9">
+<h2>9. Full Width at Half Maximum</h2>
+<p>
           Enables visualization and calculation of the full width at half maximum. FWHM estimates the duration of an event at half of its baseline-corrected amplitude.
         </p>
-        <div class="cards two">
-          <article class="formula-card">
-            <h3>FWHM</h3>
-            <p class="math">\[\text{Half maximum level}=b(t_p)+\frac{x(t_p)-b(t_p)}{2}\]</p>
-            <p class="math">\[\mathrm{FWHM}=t_{right}^{FWHM}-t_{left}^{FWHM}\]</p>
-          </article>
-          <article class="formula-card">
-            <h3>FWHP</h3>
-            <p>FWHP uses prominence rather than a global baseline:</p>
-            <p class="math">\[\text{Half prominence level}=x(t_p)-\frac{\mathrm{Prominence}}{2}\]</p>
-            <p class="math">\[\mathrm{FWHP}=t_{right}^{FWHP}-t_{left}^{FWHP}\]</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="s10" class="section">
-        <h2>10. Optional Sigmoid Modeling</h2>
-        <p>
+<div class="cards two">
+<article class="formula-card">
+<h3>FWHM</h3>
+<p class="math">\[\text{Half maximum level}=b(t_p)+\frac{x(t_p)-b(t_p)}{2}\]</p>
+<p class="math">\[\mathrm{FWHM}=t_{right}^{FWHM}-t_{left}^{FWHM}\]</p>
+</article>
+<article class="formula-card">
+<h3>FWHP</h3>
+<p>FWHP uses prominence rather than a global baseline:</p>
+<p class="math">\[\text{Half prominence level}=x(t_p)-\frac{\mathrm{Prominence}}{2}\]</p>
+<p class="math">\[\mathrm{FWHP}=t_{right}^{FWHP}-t_{left}^{FWHP}\]</p>
+</article>
+</div>
+</section>
+<section class="section" id="s10">
+<h2>10. Optional Sigmoid Modeling</h2>
+<p>
           Sigmoid models are optional. They do not modify FFT smoothing or the primary peak-detection procedure; instead, they provide additional metrics derived from fitting a smooth curve around each event.
         </p>
-        <div class="cards two">
-          <article class="formula-card">
-            <h3>10.1. Single Sigmoid</h3>
-            <p class="math">\[g(t)=B+\frac{A}{1+e^{-k(t-t_0)}}\]</p>
-            <p>Used to refine onset, rise time, and rise rate. The parameter \(k\) controls the steepness of the rise, while \(t_0\) identifies the point of maximum slope.</p>
-          </article>
-          <article class="formula-card">
-            <h3>10.2. Double Sigmoid</h3>
-            <p class="math">\[g(t)=B+A\left(\frac{1}{1+e^{-k_1(t-t_1)}}-\frac{1}{1+e^{-k_2(t-t_2)}}\right)\]</p>
-            <p>Models both the rising and decay phases. It provides metrics for offset, duration, decay time, and decay slope.</p>
-          </article>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Sigmoid output</th><th>Definition</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>SingleSigmoid_Slope_at_t0</td><td>Maximum slope of the single-sigmoid fit: \(A k/4\).</td><td>A larger value indicates a more abrupt rise.</td></tr>
-              <tr><td>SingleSigmoid_R2</td><td>Goodness of fit for the single-sigmoid model.</td><td>A value close to 1 indicates that the rising phase is well approximated by a sigmoid.</td></tr>
-              <tr><td>DoubleSigmoid_Decay_Time</td><td>Decay time from the peak to the fitted offset or right-side minimum.</td><td>A larger value indicates a more prolonged recovery phase.</td></tr>
-              <tr><td>DoubleSigmoid_Decay_Slope</td><td>Decay slope, conventionally reported as a negative value.</td><td>A more negative value indicates faster decay.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="s11" class="section">
-        <h2>11. Download Options</h2>
-        <div class="table-wrap small-table">
-          <table>
-            <thead><tr><th>Button</th><th>File</th><th>Contents</th></tr></thead>
-            <tbody>
-              <tr><td>11.1. Trace Metrics</td><td><code>Trace_Metrics.csv</code></td><td>Metrics for each detected event or transient.</td></tr>
-              <tr><td>11.2. Transient Metrics</td><td><code>Transient_Metrics.csv</code></td><td>Summary metrics for the selected signal.</td></tr>
-              <tr><td>11.3. Calcium Trace Graph</td><td><code>.png</code></td><td>Main calcium-trace plot.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="s12" class="section soft">
-        <h2>12. SummaryData</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Output</th><th>What it shows</th><th>What to review</th></tr></thead>
-            <tbody>
-              <tr><td>12.1. Dataset Summary</td><td>Number of ROIs and number of time-point observations.</td><td>Confirm that the number of ROIs matches the input file.</td></tr>
-              <tr><td>12.2. Dataset</td><td>Interactive table displaying the imported dataset.</td><td>Check for missing values, incorrectly named columns, or inconsistent units.</td></tr>
-              <tr><td>12.3. Selected ROI Trace</td><td>Plot of the selected ROI before the main analysis results.</td><td>Inspect for drift, noise, clipping, or fluorescence saturation.</td></tr>
-              <tr><td>12.4. Selected ROI Descriptive Summary</td><td>Minimum, maximum, mean, median, and standard deviation.</td><td>Identify flat signals, outliers, or unexpected value ranges.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="s13" class="section">
-        <h2>13. Peaks</h2>
-        <p>
+<div class="cards two">
+<article class="formula-card">
+<h3>10.1. Single Sigmoid</h3>
+<p class="math">\[g(t)=B+\frac{A}{1+e^{-k(t-t_0)}}\]</p>
+<p>Used to refine onset, rise time, and rise rate. The parameter \(k\) controls the steepness of the rise, while \(t_0\) identifies the point of maximum slope.</p>
+</article>
+<article class="formula-card">
+<h3>10.2. Double Sigmoid</h3>
+<p class="math">\[g(t)=B+A\left(\frac{1}{1+e^{-k_1(t-t_1)}}-\frac{1}{1+e^{-k_2(t-t_2)}}\right)\]</p>
+<p>Models both the rising and decay phases. It provides metrics for offset, duration, decay time, and decay slope.</p>
+</article>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Sigmoid output</th><th>Definition</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>SingleSigmoid_Slope_at_t0</td><td>Maximum slope of the single-sigmoid fit: \(A k/4\).</td><td>A larger value indicates a more abrupt rise.</td></tr>
+<tr><td>SingleSigmoid_R2</td><td>Goodness of fit for the single-sigmoid model.</td><td>A value close to 1 indicates that the rising phase is well approximated by a sigmoid.</td></tr>
+<tr><td>DoubleSigmoid_Decay_Time</td><td>Decay time from the peak to the fitted offset or right-side minimum.</td><td>A larger value indicates a more prolonged recovery phase.</td></tr>
+<tr><td>DoubleSigmoid_Decay_Slope</td><td>Decay slope, conventionally reported as a negative value.</td><td>A more negative value indicates faster decay.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="section" id="s11">
+<h2>11. Download Options</h2>
+<div class="table-wrap small-table">
+<table>
+<thead><tr><th>Button</th><th>File</th><th>Contents</th></tr></thead>
+<tbody>
+<tr><td>11.1. Trace Metrics</td><td><code>Trace_Metrics.csv</code></td><td>Metrics for each detected event or transient.</td></tr>
+<tr><td>11.2. Transient Metrics</td><td><code>Transient_Metrics.csv</code></td><td>Summary metrics for the selected signal.</td></tr>
+<tr><td>11.3. Calcium Trace Graph</td><td><code>.png</code></td><td>Main calcium-trace plot.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="section soft" id="s12">
+<h2>12. SummaryData</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Output</th><th>What it shows</th><th>What to review</th></tr></thead>
+<tbody>
+<tr><td>12.1. Dataset Summary</td><td>Number of ROIs and number of time-point observations.</td><td>Confirm that the number of ROIs matches the input file.</td></tr>
+<tr><td>12.2. Dataset</td><td>Interactive table displaying the imported dataset.</td><td>Check for missing values, incorrectly named columns, or inconsistent units.</td></tr>
+<tr><td>12.3. Selected ROI Trace</td><td>Plot of the selected ROI before the main analysis results.</td><td>Inspect for drift, noise, clipping, or fluorescence saturation.</td></tr>
+<tr><td>12.4. Selected ROI Descriptive Summary</td><td>Minimum, maximum, mean, median, and standard deviation.</td><td>Identify flat signals, outliers, or unexpected value ranges.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="section" id="s13">
+<h2>13. Peaks</h2>
+<p>
           This is the primary results tab. It contains metric tables, event plots, and Fourier analysis outputs.
         </p>
-        <h3>13.1. Metrics</h3>
-        <h4>Transient Metrics</h4>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Column</th><th>Definition</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>Amplitude</td><td>In the displayed table, the application reports baseline-corrected amplitude: \(x(t_p)-b(t_p)\).</td><td>Peak magnitude above baseline.</td></tr>
-              <tr><td>Baseline_at_peak</td><td>Baseline value at the peak time.</td><td>Local reference used to correct the peak amplitude.</td></tr>
-              <tr><td>Peak_Occurence_Time</td><td>Time of the detected maximum.</td><td>When the peak occurs.</td></tr>
-              <tr><td>Prominence</td><td>Difference between the peak and the local valley or local minimum used as reference.</td><td>Local contrast of the event.</td></tr>
-              <tr><td>FWHP</td><td>Width at half prominence.</td><td>Event duration based on local contrast.</td></tr>
-              <tr><td>FWHM</td><td>Width at half of the baseline-corrected amplitude.</td><td>Event duration based on the baseline.</td></tr>
-              <tr><td>Transient_Ocurrence_Time</td><td>Estimated onset time of the transient.</td><td>When the event begins to rise.</td></tr>
-              <tr><td>Peak_Rise_Time</td><td>\(t_p-t_{onset}\).</td><td>Time required to rise from onset to peak.</td></tr>
-              <tr><td>Rise_Rate</td><td>\((x(t_p)-b(t_p))/(t_p-t_{onset})\).</td><td>Rate of rise; combines amplitude and rise time.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h4>Trace Metrics</h4>
-        <div class="table-wrap small-table">
-          <table>
-            <thead><tr><th>Column</th><th>Definition</th></tr></thead>
-            <tbody>
-              <tr><td>Time_Onset</td><td>Onset time of the first valid event.</td></tr>
-              <tr><td>Frequency</td><td>\(N/T\), defined as the number of events divided by total recording duration.</td></tr>
-              <tr><td>Baseline</td><td>Baseline used for the summary; for event-specific methods, this may represent a summary of local baselines.</td></tr>
-              <tr><td>Number_of_Peaks</td><td>Number of valid peaks remaining after filtering.</td></tr>
-              <tr><td>AUC, P_min, P_max</td><td>Total area above baseline and the time interval during which the signal exceeds the baseline.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>13.2. Metric Plots</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Visual element</th><th>What it represents</th></tr></thead>
-            <tbody>
-              <tr><td>Black line</td><td>FFT-smoothed signal.</td></tr>
-              <tr><td>Red line, when Raw Data = Yes</td><td>Original raw signal.</td></tr>
-              <tr><td>Red points</td><td>Detected peaks.</td></tr>
-              <tr><td>Green line or green segments</td><td>Static, dynamic, or event-specific baseline.</td></tr>
-              <tr><td>Green shaded area</td><td>AUC above baseline.</td></tr>
-              <tr><td>Orange segment</td><td>FWHP.</td></tr>
-              <tr><td>Brown or maroon segment</td><td>FWHM, when enabled.</td></tr>
-              <tr><td>Optional sigmoid curves</td><td>Single- or double-sigmoid fits around events.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h4>First Derivative Plot</h4>
-        <p>
+<h3>13.1. Metrics</h3>
+<h4>Transient Metrics</h4>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Column</th><th>Definition</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Amplitude</td><td>In the displayed table, the application reports baseline-corrected amplitude: \(x(t_p)-b(t_p)\).</td><td>Peak magnitude above baseline.</td></tr>
+<tr><td>Baseline_at_peak</td><td>Baseline value at the peak time.</td><td>Local reference used to correct the peak amplitude.</td></tr>
+<tr><td>Peak_Occurence_Time</td><td>Time of the detected maximum.</td><td>When the peak occurs.</td></tr>
+<tr><td>Prominence</td><td>Difference between the peak and the local valley or local minimum used as reference.</td><td>Local contrast of the event.</td></tr>
+<tr><td>FWHP</td><td>Width at half prominence.</td><td>Event duration based on local contrast.</td></tr>
+<tr><td>FWHM</td><td>Width at half of the baseline-corrected amplitude.</td><td>Event duration based on the baseline.</td></tr>
+<tr><td>Transient_Ocurrence_Time</td><td>Estimated onset time of the transient.</td><td>When the event begins to rise.</td></tr>
+<tr><td>Peak_Rise_Time</td><td>\(t_p-t_{onset}\).</td><td>Time required to rise from onset to peak.</td></tr>
+<tr><td>Rise_Rate</td><td>\((x(t_p)-b(t_p))/(t_p-t_{onset})\).</td><td>Rate of rise; combines amplitude and rise time.</td></tr>
+</tbody>
+</table>
+</div>
+<h4>Trace Metrics</h4>
+<div class="table-wrap small-table">
+<table>
+<thead><tr><th>Column</th><th>Definition</th></tr></thead>
+<tbody>
+<tr><td>Time_Onset</td><td>Onset time of the first valid event.</td></tr>
+<tr><td>Frequency</td><td>\(N/T\), defined as the number of events divided by total recording duration.</td></tr>
+<tr><td>Baseline</td><td>Baseline used for the summary; for event-specific methods, this may represent a summary of local baselines.</td></tr>
+<tr><td>Number_of_Peaks</td><td>Number of valid peaks remaining after filtering.</td></tr>
+<tr><td>AUC, P_min, P_max</td><td>Total area above baseline and the time interval during which the signal exceeds the baseline.</td></tr>
+</tbody>
+</table>
+</div>
+<h3>13.2. Metric Plots</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Visual element</th><th>What it represents</th></tr></thead>
+<tbody>
+<tr><td>Black line</td><td>FFT-smoothed signal.</td></tr>
+<tr><td>Red line, when Raw Data = Yes</td><td>Original raw signal.</td></tr>
+<tr><td>Red points</td><td>Detected peaks.</td></tr>
+<tr><td>Green line or green segments</td><td>Static, dynamic, or event-specific baseline.</td></tr>
+<tr><td>Green shaded area</td><td>AUC above baseline.</td></tr>
+<tr><td>Orange segment</td><td>FWHP.</td></tr>
+<tr><td>Brown or maroon segment</td><td>FWHM, when enabled.</td></tr>
+<tr><td>Optional sigmoid curves</td><td>Single- or double-sigmoid fits around events.</td></tr>
+</tbody>
+</table>
+</div>
+<h4>First Derivative Plot</h4>
+<p>
           Displays an approximation of \(d\hat{x}/dt\). Positive values indicate a rising signal, whereas negative values indicate decay. A peak in the derivative often identifies the fastest rising phase of a calcium transient.
         </p>
-
-        <h4>Polynomial Trend Removal Plot</h4>
-        <p>
-          When detrending is enabled, the application fits a polynomial \(m(t)\) to the original signal and uses the residual as the new analysis signal:
-        </p>
-        <p class="math">\[x_{detrended}(t)=x_{original}(t)-\hat{m}(t)\]</p>
-      </section>
-
-      <section id="s133" class="section soft">
-        <h2>13.3. Fourier Analysis</h2>
-        <p>
+</section>
+<section class="section soft" id="s133">
+<h2>13.3. Fourier Analysis</h2>
+<p>
           This tab explains the FFT smoothing procedure used by the module. The signal is decomposed into frequency components, low-frequency components are retained, and the smoothed signal is reconstructed.
         </p>
-        <div class="formula-card">
-          <h3>Transform and reconstruction</h3>
-          <p>The FFT represents the signal as a combination of sinusoidal waves:</p>
-          <p class="math">\[X_k=\sum_{t=1}^{n} x_t e^{-2\pi i k(t-1)/n}\]</p>
-          <p>The low-frequency reconstruction can be written as:</p>
-          <p class="math">\[\hat{x}_t=a_0+\sum_{k=1}^{k_{keep}-1}\left[a_k\cos\left(\frac{2\pi k(t-1)}{n}\right)+b_k\sin\left(\frac{2\pi k(t-1)}{n}\right)\right]\]</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Output</th><th>Definition</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>13.3.1. FFT Summary</td><td>Displays the ROI, \(n\), \(n_{pos}\), <code>k_keep</code>, cutoff frequency \(\omega_c\), fraction \(f\), and whether the mean was retained.</td><td>Use this output to report exactly how the signal was smoothed.</td></tr>
-              <tr><td>13.3.2. FFT Fit Plot</td><td>Overlays the original signal and smoothed signal.</td><td>The smoothed curve should follow the major events without tracking noise.</td></tr>
-              <tr><td>13.3.3. FFT Residual Plot</td><td>Plots \(r_t=x_t-\hat{x}_t\).</td><td>Residuals centered around zero and lacking structured patterns suggest appropriate smoothing. Visible events in the residuals may indicate over-smoothing.</td></tr>
-              <tr><td>13.3.4. Spectrum Plot</td><td>Periodogram \(I(\omega)=|X_k|^2/n\) as a function of angular frequency.</td><td>Shows where the signal energy is concentrated in frequency space.</td></tr>
-              <tr><td>13.3.5. Frequency Table</td><td>Lists <code>k</code>, <code>omega</code>, <code>freq</code>, <code>period</code>, real and imaginary components, modulus, power, periodogram, and retention status.</td><td>Allows auditing of which frequency components are included in the reconstruction.</td></tr>
-              <tr><td>13.3.6. Explicit Reconstruction Formula</td><td>Explicit sine-and-cosine formula for retained components.</td><td>Useful for reproducibility and mathematical interpretation.</td></tr>
-              <tr><td>13.3.7. Theory and Interpretation</td><td>Educational text describing FFT-based smoothing.</td><td>Useful for explaining why removal of high-frequency components reduces noise.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="s14" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Key module output</p>
-          <h2>14. Baseline Sensitivity Analysis</h2>
-        </div>
-        <p>
+<div class="formula-card">
+<h3>Transform and reconstruction</h3>
+<p>The FFT represents the signal as a combination of sinusoidal waves:</p>
+<p class="math">\[X_k=\sum_{t=1}^{n} x_t e^{-2\pi i k(t-1)/n}\]</p>
+<p>The low-frequency reconstruction can be written as:</p>
+<p class="math">\[\hat{x}_t=a_0+\sum_{k=1}^{k_{keep}-1}\left[a_k\cos\left(\frac{2\pi k(t-1)}{n}\right)+b_k\sin\left(\frac{2\pi k(t-1)}{n}\right)\right]\]</p>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Output</th><th>Definition</th><th>Interpretation</th></tr></thead>
+<tbody><tr><td>13.3.1. FFT Summary</td><td>Shows ROI, \(n\), \(n_{pos}\), <code>k_keep</code>, cutoff frequency \(\omega_c\), fraction \(f\), whether the mean is kept, the FFT fit plot, and the residual plot.</td><td>Use this to report exactly how the signal was smoothed and whether the residual keeps biological structure.</td></tr><tr><td>13.3.2. Spectrum and Frequency Table</td><td>Shows the periodogram and the retained/not-retained frequency table.</td><td>Allows auditing which frequencies enter the reconstruction.</td></tr><tr><td>13.3.3. Explicit Reconstruction Formula Using the Kept FFT Frequencies</td><td>Explicit formula using the retained sines and cosines.</td><td>Useful for reproducibility and mathematical explanation.</td></tr><tr><td>13.3.4. Theory and Interpretation</td><td>Educational text about FFT and smoothing.</td><td>Use it to explain why removing high frequencies reduces noise.</td></tr></tbody>
+</table>
+</div>
+</section>
+<section class="section" id="s14">
+<div class="section-heading">
+<p class="eyebrow">Key module output</p>
+<h2>14. Baseline Sensitivity Analysis</h2>
+</div><h3>14.1. Methodological Note: Why Baseline Matters</h3>
+<p>
           This tab recalculates metrics from the same FFT-smoothed trace using multiple baseline definitions. Its purpose is not to claim that one baseline is universally correct, but rather to assess whether the conclusions depend strongly on the chosen reference.
         </p>
-        <div class="formula-card">
-          <h3>Automatic sensitivity index</h3>
-          <p>The application calculates coefficients of variation for amplitude, AUC, and FWHM:</p>
-          <p class="math">\[CV(\%)=100\cdot\frac{\mathrm{sd}(z_1,z_2,\ldots,z_m)}{\mathrm{mean}(|z_1|,|z_2|,\ldots,|z_m|)}\]</p>
-          <p>A low CV indicates stability across baseline definitions. A high CV indicates substantial sensitivity.</p>
-        </div>
-
-        <h3>14.2. Baseline Sensitivity Table</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Column</th><th>Definition</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>Baseline_Method</td><td>Baseline definition being evaluated.</td><td>Compare methods row by row.</td></tr>
-              <tr><td>Baseline_Type</td><td>Static / scalar, Dynamic / time-varying, or Event-specific.</td><td>Indicates whether the baseline is a single value, a time-varying curve, or a local line for each event.</td></tr>
-              <tr><td>Baseline_Mean, Median, Min, Max, IQR</td><td>Summary statistics of the baseline.</td><td>For static baselines, these values are typically identical; for dynamic baselines, they describe the baseline trajectory.</td></tr>
-              <tr><td>Number_of_Peaks</td><td>Number of events accepted under that baseline definition.</td><td>If this changes substantially, event detection or filtering depends on the baseline.</td></tr>
-              <tr><td>Frequency</td><td>\(N/T\).</td><td>Event frequency per unit time.</td></tr>
-              <tr><td>Mean_Amplitude_Above_Baseline</td><td>Mean of \(x(t_p)-b(t_p)\).</td><td>A metric that is often highly sensitive to the baseline.</td></tr>
-              <tr><td>Mean_Prominence</td><td>Mean peak-to-valley contrast.</td><td>More locally defined than baseline-corrected amplitude.</td></tr>
-              <tr><td>Mean_FWHP</td><td>Mean width at half prominence.</td><td>Duration measure based on local prominence.</td></tr>
-              <tr><td>Mean_FWHM</td><td>Mean width at half of the baseline-corrected amplitude.</td><td>May change when the baseline level shifts.</td></tr>
-              <tr><td>Mean_Peak_Rise_Time</td><td>Mean of \(t_p-t_{onset}\).</td><td>Mean time from onset to peak.</td></tr>
-              <tr><td>Mean_Peak_Occurence_Time</td><td>Mean of peak times.</td><td>Summarizes the temporal region in which peaks are concentrated.</td></tr>
-              <tr><td>Mean_Transient_Occurence_Time / Mean_Onset</td><td>Mean onset time.</td><td>Summarizes when events begin.</td></tr>
-              <tr><td>Mean_Rise_Rate</td><td>Mean baseline-corrected amplitude divided by rise time.</td><td>Higher values indicate faster and/or larger events.</td></tr>
-              <tr><td>AUC</td><td>Total area above baseline.</td><td>Integrates amplitude and duration; it is often among the most baseline-sensitive metrics.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>14.3. Baseline Sensitivity Plot</h3>
-        <p>
+<div class="formula-card">
+<h3>Automatic sensitivity index</h3>
+<p>The application calculates coefficients of variation for amplitude, AUC, and FWHM:</p>
+<p class="math">\[CV(\%)=100\cdot\frac{\mathrm{sd}(z_1,z_2,\ldots,z_m)}{\mathrm{mean}(|z_1|,|z_2|,\ldots,|z_m|)}\]</p>
+<p>A low CV indicates stability across baseline definitions. A high CV indicates substantial sensitivity.</p>
+</div>
+<h3>14.2. Baseline Sensitivity Table</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Column</th><th>Definition</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>Baseline_Method</td><td>Baseline definition being evaluated.</td><td>Compare methods row by row.</td></tr>
+<tr><td>Baseline_Type</td><td>Static / scalar, Dynamic / time-varying, or Event-specific.</td><td>Indicates whether the baseline is a single value, a time-varying curve, or a local line for each event.</td></tr>
+<tr><td>Baseline_Mean, Median, Min, Max, IQR</td><td>Summary statistics of the baseline.</td><td>For static baselines, these values are typically identical; for dynamic baselines, they describe the baseline trajectory.</td></tr>
+<tr><td>Number_of_Peaks</td><td>Number of events accepted under that baseline definition.</td><td>If this changes substantially, event detection or filtering depends on the baseline.</td></tr>
+<tr><td>Frequency</td><td>\(N/T\).</td><td>Event frequency per unit time.</td></tr>
+<tr><td>Mean_Amplitude_Above_Baseline</td><td>Mean of \(x(t_p)-b(t_p)\).</td><td>A metric that is often highly sensitive to the baseline.</td></tr>
+<tr><td>Mean_Prominence</td><td>Mean peak-to-valley contrast.</td><td>More locally defined than baseline-corrected amplitude.</td></tr>
+<tr><td>Mean_FWHP</td><td>Mean width at half prominence.</td><td>Duration measure based on local prominence.</td></tr>
+<tr><td>Mean_FWHM</td><td>Mean width at half of the baseline-corrected amplitude.</td><td>May change when the baseline level shifts.</td></tr>
+<tr><td>Mean_Peak_Rise_Time</td><td>Mean of \(t_p-t_{onset}\).</td><td>Mean time from onset to peak.</td></tr>
+<tr><td>Mean_Peak_Occurence_Time</td><td>Mean of peak times.</td><td>Summarizes the temporal region in which peaks are concentrated.</td></tr>
+<tr><td>Mean_Transient_Occurence_Time / Mean_Onset</td><td>Mean onset time.</td><td>Summarizes when events begin.</td></tr>
+<tr><td>Mean_Rise_Rate</td><td>Mean baseline-corrected amplitude divided by rise time.</td><td>Higher values indicate faster and/or larger events.</td></tr>
+<tr><td>AUC</td><td>Total area above baseline.</td><td>Integrates amplitude and duration; it is often among the most baseline-sensitive metrics.</td></tr>
+</tbody>
+</table>
+</div>
+<h3>14.3. Baseline Sensitivity Plot</h3>
+<p>
           The example plot displays bars for each baseline method and facets for each metric. Each panel asks: <em>if only the baseline definition changes, how much does this metric change?</em>
-        </p>
-        <figure class="figure-card">
-          <img src="assets/baseline-sensitivity-fft.png" alt="Example Baseline Sensitivity Analysis plot with metric-specific facets" />
-          <figcaption>Example: each panel compares one metric across baseline definitions. Do not compare bar heights across panels with different units; instead, compare the pattern among baseline methods within each panel.</figcaption>
-        </figure>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Facet</th><th>What it compares</th><th>Rapid interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>AUC</td><td>Integrated area above baseline.</td><td>Large differences indicate that total activity quantification depends on the baseline definition.</td></tr>
-              <tr><td>Frequency</td><td>Number of peaks per total recording duration.</td><td>If this changes, some events may pass or fail filtering depending on the baseline.</td></tr>
-              <tr><td>Mean_Amplitude_Above_Baseline</td><td>Mean baseline-corrected amplitude.</td><td>Some change is expected; the key question is whether the difference is minor or substantial.</td></tr>
-              <tr><td>Mean_FWHM</td><td>Width at half maximum relative to baseline.</td><td>Can be highly sensitive when the baseline shifts near half of the peak amplitude.</td></tr>
-              <tr><td>Mean_FWHP</td><td>Width at half prominence.</td><td>May be more stable when local peak-to-valley contrast is preserved.</td></tr>
-              <tr><td>Mean_Onset / Mean_Transient_Occurence_Time</td><td>Mean transient onset.</td><td>Changes suggest that event boundaries are being estimated differently.</td></tr>
-              <tr><td>Mean_Peak_Occurence_Time</td><td>Mean peak time.</td><td>Should remain stable if the same events are detected.</td></tr>
-              <tr><td>Mean_Peak_Rise_Time</td><td>Time from onset to peak.</td><td>Changes indicate a different onset estimate or a different set of accepted events.</td></tr>
-              <tr><td>Mean_Prominence</td><td>Mean peak-to-valley contrast.</td><td>If prominence is stable but amplitude changes, the issue is more likely related to the global baseline than local morphology.</td></tr>
-              <tr><td>Mean_Rise_Rate</td><td>Baseline-corrected amplitude divided by rise time.</td><td>Sensitive to both baseline selection and onset estimation.</td></tr>
-              <tr><td>Number_of_Peaks</td><td>Event count.</td><td>If the count changes substantially, baseline sensitivity should be reported as a methodological result.</td></tr>
-            </tbody>
-          </table>
+</p>
+<figure class="figure-card">
+<img alt="Example Baseline Sensitivity Analysis plot with metric-specific facets" src="assets/baseline-sensitivity-fft.png"/>
+<figcaption>Example: each panel compares one metric across baseline definitions. Do not compare bar heights across panels with different units; instead, compare the pattern among baseline methods within each panel.</figcaption>
+</figure>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Facet</th><th>What it compares</th><th>Rapid interpretation</th></tr></thead>
+<tbody>
+<tr><td>AUC</td><td>Integrated area above baseline.</td><td>Large differences indicate that total activity quantification depends on the baseline definition.</td></tr>
+<tr><td>Frequency</td><td>Number of peaks per total recording duration.</td><td>If this changes, some events may pass or fail filtering depending on the baseline.</td></tr>
+<tr><td>Mean_Amplitude_Above_Baseline</td><td>Mean baseline-corrected amplitude.</td><td>Some change is expected; the key question is whether the difference is minor or substantial.</td></tr>
+<tr><td>Mean_FWHM</td><td>Width at half maximum relative to baseline.</td><td>Can be highly sensitive when the baseline shifts near half of the peak amplitude.</td></tr>
+<tr><td>Mean_FWHP</td><td>Width at half prominence.</td><td>May be more stable when local peak-to-valley contrast is preserved.</td></tr>
+<tr><td>Mean_Onset / Mean_Transient_Occurence_Time</td><td>Mean transient onset.</td><td>Changes suggest that event boundaries are being estimated differently.</td></tr>
+<tr><td>Mean_Peak_Occurence_Time</td><td>Mean peak time.</td><td>Should remain stable if the same events are detected.</td></tr>
+<tr><td>Mean_Peak_Rise_Time</td><td>Time from onset to peak.</td><td>Changes indicate a different onset estimate or a different set of accepted events.</td></tr>
+<tr><td>Mean_Prominence</td><td>Mean peak-to-valley contrast.</td><td>If prominence is stable but amplitude changes, the issue is more likely related to the global baseline than local morphology.</td></tr>
+<tr><td>Mean_Rise_Rate</td><td>Baseline-corrected amplitude divided by rise time.</td><td>Sensitive to both baseline selection and onset estimation.</td></tr>
+<tr><td>Number_of_Peaks</td><td>Event count.</td><td>If the count changes substantially, baseline sensitivity should be reported as a methodological result.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="notice">
+<strong>Interpretation rule:</strong> do not mix units. AUC, FWHM, frequency, and amplitude are measured on different scales. The relevant comparison is the variation of the same metric across baseline definitions.
         </div>
-        <div class="notice">
-          <strong>Interpretation rule:</strong> do not mix units. AUC, FWHM, frequency, and amplitude are measured on different scales. The relevant comparison is the variation of the same metric across baseline definitions.
-        </div>
-      </section>
-
-      <section id="s15" class="section soft">
-        <div class="section-heading">
-          <p class="eyebrow">Smoothing selection</p>
-          <h2>15. FFT Selection Criteria</h2>
-        </div>
-        <p>
+</section>
+<section class="section soft" id="s15">
+<div class="section-heading">
+<p class="eyebrow">Smoothing selection</p>
+<h2>15. FFT Selection Criteria</h2>
+</div><h3>15.1. Selection of FFT Low-Frequency Fraction</h3>
+<p>
           This tab helps select an FFT fraction \(f\). The application compares candidate fractions \(f=0.10,0.15,0.20,0.25,0.30,0.35,0.40\) using four descriptive criteria.
         </p>
-
-        <h3>15.2. Grid assessment for candidate FFT fractions</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Column</th><th>Mathematical definition</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>f</td><td>Fraction of retained low-frequency components.</td><td>Lower \(f\) = stronger smoothing; higher \(f\) = weaker smoothing.</td></tr>
-              <tr><td>k_keep</td><td>\(\max(1,\lfloor f n_{pos}\rfloor)\).</td><td>Number of retained low-frequency components on the positive-frequency side.</td></tr>
-              <tr><td>corr_raw_smooth</td><td>\(\mathrm{cor}(x,\hat{x})\).</td><td>A value close to 1 indicates that the smoothed signal retains the overall shape of the raw trace.</td></tr>
-              <tr><td>retained_power_frac</td><td>\(\frac{\sum_{k\in K_{kept}} |X_k|^2}{\sum_k |X_k|^2}\).</td><td>Fraction of spectral energy retained. A low value indicates that substantial signal variation is being discarded.</td></tr>
-              <tr><td>n_peaks</td><td>Number of peaks detected using internal exploratory parameters.</td><td>Evaluates whether smoothing changes the number of detected events.</td></tr>
-              <tr><td>mean_peak</td><td>Mean absolute amplitude of detected peaks.</td><td>Used in Criterion 4 to select a candidate close to the weighted mean.</td></tr>
-            </tbody>
-          </table>
+<h3>15.2. Grid assessment for candidate FFT fractions</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Column</th><th>Mathematical definition</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>f</td><td>Fraction of retained low-frequency components.</td><td>Lower \(f\) = stronger smoothing; higher \(f\) = weaker smoothing.</td></tr>
+<tr><td>k_keep</td><td>\(\max(1,\lfloor f n_{pos}\rfloor)\).</td><td>Number of retained low-frequency components on the positive-frequency side.</td></tr>
+<tr><td>corr_raw_smooth</td><td>\(\mathrm{cor}(x,\hat{x})\).</td><td>A value close to 1 indicates that the smoothed signal retains the overall shape of the raw trace.</td></tr>
+<tr><td>retained_power_frac</td><td>\(\frac{\sum_{k\in K_{kept}} |X_k|^2}{\sum_k |X_k|^2}\).</td><td>Fraction of spectral energy retained. A low value indicates that substantial signal variation is being discarded.</td></tr>
+<tr><td>n_peaks</td><td>Number of peaks detected using internal exploratory parameters.</td><td>Evaluates whether smoothing changes the number of detected events.</td></tr>
+<tr><td>mean_peak</td><td>Mean absolute amplitude of detected peaks.</td><td>Used in Criterion 4 to select a candidate close to the weighted mean.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="warning">
+<strong>Note:</strong> this table uses fixed internal parameters to compare candidates consistently. It may not use all manually selected <code>Find Peaks Function Arguments</code>.
         </div>
-        <div class="warning">
-          <strong>Note:</strong> this table uses fixed internal parameters to compare candidates consistently. It may not use all manually selected <code>Find Peaks Function Arguments</code>.
-        </div>
-
-        <h3>15.3. Criterion 1: Raw vs. FFT-smoothed signal</h3>
-        <p>
+<h3>15.3. Criterion 1: Raw vs. FFT-smoothed signal</h3>
+<p>
           Each panel shows the same trace using a different FFT fraction \(f\). This criterion evaluates morphological preservation.
         </p>
-        <div class="table-wrap small-table">
-          <table>
-            <thead><tr><th>Visual pattern</th><th>Interpretation</th></tr></thead>
-            <tbody>
-              <tr><td>The smoothed curve follows major peaks while reducing noise.</td><td>Good candidate.</td></tr>
-              <tr><td>The smoothed curve is excessively flat and removes narrow events.</td><td>\(f\) is likely too low.</td></tr>
-              <tr><td>The smoothed curve follows small noisy oscillations.</td><td>\(f\) is likely too high.</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>15.4. Criterion 2: Residuals</h3>
-        <p>
+<div class="table-wrap small-table">
+<table>
+<thead><tr><th>Visual pattern</th><th>Interpretation</th></tr></thead>
+<tbody>
+<tr><td>The smoothed curve follows major peaks while reducing noise.</td><td>Good candidate.</td></tr>
+<tr><td>The smoothed curve is excessively flat and removes narrow events.</td><td>\(f\) is likely too low.</td></tr>
+<tr><td>The smoothed curve follows small noisy oscillations.</td><td>\(f\) is likely too high.</td></tr>
+</tbody>
+</table>
+</div>
+<h3>15.4. Criterion 2: Residuals</h3>
+<p>
           Residuals are defined as:</p>
-        <p class="math">\[r_t=x_t-\hat{x}_t\]</p>
-        <p>
+<p class="math">\[r_t=x_t-\hat{x}_t\]</p>
+<p>
           A suitable residual should resemble noise distributed around zero. If the shape of a calcium transient remains visible in the residual, FFT smoothing has removed biologically meaningful signal.
         </p>
-        <div class="table-wrap small-table">
-          <table>
-            <thead><tr><th>Residual pattern</th><th>What it indicates</th></tr></thead>
-            <tbody>
-              <tr><td>Small, centered around zero, and without obvious structure.</td><td>Appropriate smoothing.</td></tr>
-              <tr><td>Large waves with peak-like morphology.</td><td>Over-smoothing; the reconstruction has removed events.</td></tr>
-              <tr><td>Very small residuals but a visibly noisy smoothed signal.</td><td>Under-smoothing; \(f\) may be too high.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>
+<div class="table-wrap small-table">
+<table>
+<thead><tr><th>Residual pattern</th><th>What it indicates</th></tr></thead>
+<tbody>
+<tr><td>Small, centered around zero, and without obvious structure.</td><td>Appropriate smoothing.</td></tr>
+<tr><td>Large waves with peak-like morphology.</td><td>Over-smoothing; the reconstruction has removed events.</td></tr>
+<tr><td>Very small residuals but a visibly noisy smoothed signal.</td><td>Under-smoothing; \(f\) may be too high.</td></tr>
+</tbody>
+</table>
+</div>
+<p>
           The application compares the residual standard deviation of each candidate against that of the reference candidate \(f=0.40\). Under the internal heuristic, a candidate passes this criterion when:
         </p>
-        <p class="math">\[\mathrm{sd}(r_f) \le 1.5\,\mathrm{sd}(r_{0.40})\]</p>
-
-        <h3>15.5. Criterion 3: Periodogram and cutoff</h3>
-        <p>
+<p class="math">\[\mathrm{sd}(r_f) \le 1.5\,\mathrm{sd}(r_{0.40})\]</p>
+<h3>15.5. Criterion 3: Periodogram and cutoff</h3>
+<p>
           The periodogram measures power as a function of frequency:</p>
-        <p class="math">\[I(\omega_k)=\frac{|X_k|^2}{n}, \qquad \omega_k=\frac{2\pi k}{n}\]</p>
-        <p>
+<p class="math">\[I(\omega_k)=\frac{|X_k|^2}{n}, \qquad \omega_k=\frac{2\pi k}{n}\]</p>
+<p>
           The vertical dashed line marks the approximate cutoff:</p>
-        <p class="math">\[\omega_c=\frac{2\pi(k_{keep}-1)}{n}\]</p>
-        <p>
+<p class="math">\[\omega_c=\frac{2\pi(k_{keep}-1)}{n}\]</p>
+<p>
           The application considers retaining at least 90% of spectral power to be favorable:
         </p>
-        <p class="math">\[\mathrm{retained\_power\_frac}\ge 0.90\]</p>
-
-        <h3>15.6. Criterion 4: Mean peak closeness to weighted mean</h3>
-        <p>
+<p class="math">\[\mathrm{retained\_power\_frac}\ge 0.90\]</p>
+<h3>15.6. Criterion 4: Mean peak closeness to weighted mean</h3>
+<p>
           This criterion compares each candidate's <code>mean_peak</code> value against a weighted mean, using the number of detected peaks as the weight:
         </p>
-        <p class="math">\[\bar{p}_{w}=\frac{\sum_f n_f\,\mathrm{mean\_peak}_f}{\sum_f n_f}\]</p>
-        <p>
+<p class="math">\[\bar{p}_{w}=\frac{\sum_f n_f\,\mathrm{mean\_peak}_f}{\sum_f n_f}\]</p>
+<p>
           The candidate recommended by this criterion is the one that minimizes:
         </p>
-        <p class="math">\[\left|\mathrm{mean\_peak}_f-\bar{p}_{w}\right|\]</p>
-        <div class="notice">
-          <strong>Interpretation:</strong> this criterion identifies an FFT fraction that does not systematically produce overly small peaks through over-smoothing or overly large/noisy peaks through under-smoothing. The final decision should integrate this result with visual inspection of Criteria 1–3.
+<p class="math">\[\left|\mathrm{mean\_peak}_f-\bar{p}_{w}\right|\]</p>
+<div class="notice">
+<strong>Interpretation:</strong> this criterion identifies an FFT fraction that does not systematically produce overly small peaks through over-smoothing or overly large/noisy peaks through under-smoothing. The final decision should integrate this result with visual inspection of Criteria 1–3.
         </div>
-      </section>
-
-      <section id="workflow" class="section closing">
-        <div class="section-heading">
-          <p class="eyebrow">Practical recommendation</p>
-          <h2>Recommended Workflow</h2>
-        </div>
-        <ol class="workflow-list">
-          <li>Inspect the ROI in <strong>12. SummaryData</strong>.</li>
-          <li>Start with an FFT fraction between 0.20 and 0.30, and enable <strong>Raw Data</strong>.</li>
-          <li>Adjust <strong>Find Peaks</strong> parameters until the detected peaks match visually apparent events.</li>
-          <li>Compare baseline definitions in <strong>14. Baseline Sensitivity Analysis</strong>.</li>
-          <li>Use <strong>15. FFT Selection Criteria</strong> to justify or refine the selected FFT fraction.</li>
-          <li>Always report the baseline method, FFT fraction, and peak-filtering parameters used.</li>
-        </ol>
-      </section>
-    </div>
-  </main>
-
-  <footer class="footer">
-    <p>CalciumInsights — FFT + Baseline Analysis guide.</p>
-  </footer>
-
-  <script src="script.js"></script>
+</section>
+<section class="section closing" id="workflow">
+<div class="section-heading">
+<p class="eyebrow">Practical recommendation</p>
+<h2>Recommended Workflow</h2>
+</div>
+<ol class="workflow-list">
+<li>Inspect the ROI in <strong>12. SummaryData</strong>.</li>
+<li>Start with an FFT fraction between 0.20 and 0.30, and enable <strong>Raw Data</strong>.</li>
+<li>Adjust <strong>Find Peaks</strong> parameters until the detected peaks match visually apparent events.</li>
+<li>Compare baseline definitions in <strong>14. Baseline Sensitivity Analysis</strong>.</li>
+<li>Use <strong>15. FFT Selection Criteria</strong> to justify or refine the selected FFT fraction.</li>
+<li>Always report the baseline method, FFT fraction, and peak-filtering parameters used.</li>
+</ol>
+</section>
+</div>
+</main>
+<footer class="footer">
+<p>CalciumInsights — FFT + Baseline Analysis guide.</p>
+</footer>
+<script src="script.js"></script>
 </body>
 </html>

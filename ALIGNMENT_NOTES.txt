@@ -1,0 +1,16 @@
+Alignment notes
+===============
+
+This website copy was aligned to the corrected CalciumInsights FFT and Wavelet module numbering used in this conversation.
+
+Main updates:
+- Wavelet guide: removed the former 11.1 Summary Metrics documentation because that table is no longer visible in the app.
+- Wavelet guide: renumbered sections to 1-15, with 13.1 Transient Metrics and 13.2 Trace Metrics.
+- Wavelet guide: added/renumbered Optional Sigmoid Modeling and Download Options to match the module UI.
+- Wavelet guide: corrected Wavelet Ridgewalking argument order, baseline options, and Biological Event Filter order.
+- FFT guide: corrected baseline option numbering 6.1-6.8.
+- FFT guide: corrected Fourier Analysis subsections to 13.3.1-13.3.4.
+- FFT guide: added missing 14.1 and 15.1 headings.
+- Spanish and English versions were updated in parallel.
+
+No app R files were modified in this package.

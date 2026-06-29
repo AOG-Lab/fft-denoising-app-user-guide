@@ -107,7 +107,7 @@
 .metric-accordion details[open] summary::after { content: "Close"; }
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   padding: 0 1rem 1rem;
 }
@@ -133,8 +133,27 @@
 @media (max-width: 860px) {
   .gallery-intro,
   .metric-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
+}
+
+
+/* Individual-gallery layout update: one figure per row */
+.metric-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+  max-width: 980px;
+  margin-inline: auto;
+}
+.metric-grid .figure-card {
+  width: 100%;
+}
+.metric-grid .figure-frame {
+  padding: 1rem;
+}
+.metric-grid .figure-frame img {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
 }
 </style></head>
 <body>
@@ -182,7 +201,6 @@
 <a href="#modules">3. Module guides</a>
 <a href="#baseline">4. Shared baselines</a><a href="#output-gallery">5. Output gallery</a>
 <a href="#how-to-use">6. How to use this guide</a>
-
 </aside>
 <div class="content">
 <section class="section" id="overview">
@@ -291,9 +309,7 @@
 <p>
           This gallery gives users a visual preview of the main FFT + Baseline Analysis outputs before they run CalciumInsights. Each example shows the same calcium trace evaluated under the baseline definitions available in the app, allowing users to see how event-level measurements are annotated.
         </p>
-<p>
-          The examples are intentionally organized by concept rather than shown as one long list. Open each group to inspect the metric-specific plots.
-        </p>
+<p>The examples are organized by concept and displayed one at a time, so users can inspect each metric without comparing two large figures side by side.</p>
 <div aria-label="Gallery categories" class="badge-row">
 <span class="badge">Baseline overview</span>
 <span class="badge">Event timing</span>
@@ -310,7 +326,6 @@
         </p>
 </div>
 </div>
-
 <div>
 <h3>Featured example: baseline definitions on the same trace</h3>
 <p>

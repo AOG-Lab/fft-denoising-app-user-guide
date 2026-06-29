@@ -1,197 +1,572 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CalciumInsights | Detailed User Guide</title>
-  <meta name="description" content="Detailed guide for interpreting CalciumInsights results: FFT + Baseline Analysis and Wavelet Ridgewalking." />
-  <link rel="stylesheet" href="style.css" />
-  <script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>CalciumInsights | Detailed User Guide</title>
+<meta content="Detailed guide for interpreting CalciumInsights results: FFT + Baseline Analysis and Wavelet Ridgewalking." name="description"/>
+<link href="style.css" rel="stylesheet"/>
+<script>
     window.MathJax = { tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]']] }, svg: { fontCache: 'global' } };
   </script>
-  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-</head>
+<script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+/* Output gallery added for CalciumInsights examples */
+.output-gallery {
+  display: grid;
+  gap: 1.25rem;
+}
+.gallery-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(260px, .75fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+.gallery-note {
+  background: var(--primary-soft);
+  border: 1px solid #c7d7fe;
+  border-radius: 18px;
+  padding: 1rem;
+}
+.figure-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+.figure-card.featured { margin-top: .5rem; }
+.figure-card-header {
+  padding: 1rem 1rem .65rem;
+}
+.figure-card-header h3 {
+  margin: 0 0 .35rem;
+  font-size: 1.15rem;
+}
+.figure-card-header p { margin: 0; color: var(--muted); }
+.figure-frame {
+  background: #fff;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: .75rem;
+}
+.figure-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.figure-caption {
+  padding: .8rem 1rem 1rem;
+  color: var(--muted);
+  font-size: .96rem;
+}
+.figure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding: 0 1rem 1rem;
+}
+.figure-actions a {
+  text-decoration: none;
+  font-weight: 750;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .35rem .7rem;
+  background: #f8fafc;
+}
+.metric-accordion {
+  display: grid;
+  gap: .75rem;
+}
+.metric-accordion details {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+}
+.metric-accordion summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 1rem 1.1rem;
+  font-weight: 850;
+  color: #0f172a;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.metric-accordion summary::-webkit-details-marker { display: none; }
+.metric-accordion summary::after {
+  content: "Open";
+  color: var(--primary);
+  font-size: .85rem;
+  font-weight: 850;
+}
+.metric-accordion details[open] summary::after { content: "Close"; }
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 0 1rem 1rem;
+}
+.metric-grid .figure-card { box-shadow: none; }
+.metric-grid .figure-card-header h3 { font-size: 1rem; }
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin-top: .75rem;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: .25rem .55rem;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: .84rem;
+  font-weight: 750;
+}
+@media (max-width: 860px) {
+  .gallery-intro,
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style></head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header">
-    <nav class="topbar" aria-label="Main navigation">
-      <a class="brand" href="index.html" aria-label="CalciumInsights home">
-        <span class="brand-mark">Ca</span>
-        <span class="brand-name">CalciumInsights</span>
-      </a>
-      <button class="nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html" aria-current="page">Home</a></li>
-        <li><a href="fft-guide-english-version.html">FFT guide</a></li>
-        <li><a href="wavelet-guide-english-version.html">Wavelet guide</a></li>
-      </ul>
-    </nav>
-
-    <section class="hero-panel" aria-labelledby="page-title">
-      <div class="hero-text">
-        <p class="eyebrow">Interpretive documentation for users and reviewers</p>
-        <h1 id="page-title">Detailed CalciumInsights Guide for Calcium Transient Analysis</h1>
-        <p class="lead">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<nav aria-label="Main navigation" class="topbar">
+<a aria-label="CalciumInsights home" class="brand" href="index-english-version.html">
+<span class="brand-mark">Ca</span>
+<span class="brand-name">CalciumInsights</span>
+</a>
+<button aria-expanded="false" aria-label="Open navigation" class="nav-toggle" type="button">☰</button>
+<ul class="nav-links">
+<li><a aria-current="page" href="index-english-version.html">Home</a></li>
+<li><a href="fft-guide-english-version.html">FFT guide</a></li>
+<li><a href="wavelet-guide-english-version.html">Wavelet guide</a></li>
+</ul>
+</nav>
+<section aria-labelledby="page-title" class="hero-panel">
+<div class="hero-text">
+<p class="eyebrow">Interpretive documentation for users and reviewers</p>
+<h1 id="page-title">Detailed CalciumInsights Guide for Calcium Transient Analysis</h1>
+<p class="lead">
           This guide explains not only where to click, but also what each table, plot, and metric means when running the <strong>FFT + Baseline Analysis</strong> and <strong>Wavelet Ridgewalking</strong> modules.
         </p>
-        <div class="hero-actions" aria-label="Module links">
-          <a class="button primary" href="fft-guide.html">Open FFT guide</a>
-          <a class="button secondary" href="wavelet-guide.html">Open Wavelet guide</a>
-        </div>
-      </div>
+<div aria-label="Module links" class="hero-actions">
+<a class="button primary" href="fft-guide-english-version.html">Open FFT guide</a>
+<a class="button secondary" href="wavelet-guide-english-version.html">Open Wavelet guide</a>
+</div>
+</div>
+<aside aria-label="Guide structure" class="hero-card">
+<h2>What users will find</h2>
+<ol class="compact-list">
+<li>Mathematical definitions for each metric.</li>
+<li>Visual interpretation of each plot.</li>
+<li>Practical rules for identifying sensitivity to baseline choice, smoothing, and detection method.</li>
+</ol>
+</aside>
+</section>
+</header>
+<main class="page-shell" id="main">
+<aside aria-label="Table of contents" class="toc">
+<strong>Contents</strong>
+<a href="#overview">1. Overview</a>
+<a href="#notation">2. Common notation</a>
+<a href="#modules">3. Module guides</a>
+<a href="#baseline">4. Shared baselines</a><a href="#output-gallery">5. Output gallery</a>
+<a href="#how-to-use">6. How to use this guide</a>
 
-      <aside class="hero-card" aria-label="Guide structure">
-        <h2>What users will find</h2>
-        <ol class="compact-list">
-          <li>Mathematical definitions for each metric.</li>
-          <li>Visual interpretation of each plot.</li>
-          <li>Practical rules for identifying sensitivity to baseline choice, smoothing, and detection method.</li>
-        </ol>
-      </aside>
-    </section>
-  </header>
-
-  <main id="main" class="page-shell">
-    <aside class="toc" aria-label="Table of contents">
-      <strong>Contents</strong>
-      <a href="#overview">1. Overview</a>
-      <a href="#notation">2. Common notation</a>
-      <a href="#modules">3. Module guides</a>
-      <a href="#baseline">4. Shared baselines</a>
-      <a href="#how-to-use">5. How to use this guide</a>
-      <a href="#publish">6. Publish on GitHub</a>
-    </aside>
-
-    <div class="content">
-      <section id="overview" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Purpose</p>
-          <h2>1. Overview</h2>
-        </div>
-        <p>
-          <strong>CalciumInsights</strong> analyzes calcium signals for each region of interest, or ROI. The application enables users to upload a time-by-signal matrix, select an ROI, detect events, estimate the baseline, and calculate metrics including amplitude, prominence, width, frequency, area under the curve, and rise times.
+</aside>
+<div class="content">
+<section class="section" id="overview">
+<div class="section-heading">
+<p class="eyebrow">Purpose</p>
+<h2>1. Overview</h2>
+</div>
+<p>
+<strong>CalciumInsights</strong> analyzes calcium signals for each region of interest, or ROI. The application enables users to upload a time-by-signal matrix, select an ROI, detect events, estimate the baseline, and calculate metrics including amplitude, prominence, width, frequency, area under the curve, and rise times.
         </p>
-        <p>
+<p>
           This documentation follows the numbering displayed in the application. When a user encounters an output such as <code>Baseline Sensitivity Analysis</code>, <code>Grid assessment for candidate FFT fractions</code>, <code>Event-Level Metrics</code>, or <code>Wavelet Analysis</code>, they can navigate to the corresponding section to understand what is shown and how to interpret it.
         </p>
-        <div class="info">
-          <strong>Core concept:</strong> calcium metrics depend on methodological decisions. The application therefore compares baseline definitions, FFT fractions, and wavelet-based detections to help distinguish robust conclusions from conclusions that are sensitive to the selected method.
+<div class="info">
+<strong>Core concept:</strong> calcium metrics depend on methodological decisions. The application therefore compares baseline definitions, FFT fractions, and wavelet-based detections to help distinguish robust conclusions from conclusions that are sensitive to the selected method.
         </div>
-      </section>
-
-      <section id="notation" class="section soft">
-        <div class="section-heading">
-          <p class="eyebrow">Shared mathematical language</p>
-          <h2>2. Common notation</h2>
-        </div>
-        <div class="cards two">
-          <article class="formula-card">
-            <h3>Signal and baseline</h3>
-            <p>We use:</p>
-            <p class="math">\[x_i = x(t_i) \quad \text{observed signal at time } t_i\]</p>
-            <p class="math">\[\hat{x}_i = \hat{x}(t_i) \quad \text{smoothed or reconstructed signal}\]</p>
-            <p class="math">\[b_i = b(t_i) \quad \text{static, dynamic, or local baseline}\]</p>
-          </article>
-          <article class="formula-card">
-            <h3>Core metrics</h3>
-            <p class="math">\[A_i = x(t_{p,i}) - b(t_{p,i})\]</p>
-            <p>Amplitude above baseline at the peak of event \(i\).</p>
-            <p class="math">\[\Delta F/F_0 = \frac{x(t_{p,i}) - b(t_{p,i})}{b(t_{p,i})}\]</p>
-            <p>Relative fluorescence change. In the application, the <code>Baseline</code> term serves as \(F_0\).</p>
-          </article>
-        </div>
-      </section>
-
-      <section id="modules" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Active modules</p>
-          <h2>3. Module guides</h2>
-        </div>
-        <div class="cards two">
-          <article class="module-card accent-blue">
-            <p class="module-label">Module 1</p>
-            <h3>FFT + Baseline Analysis</h3>
-            <p>
+</section>
+<section class="section soft" id="notation">
+<div class="section-heading">
+<p class="eyebrow">Shared mathematical language</p>
+<h2>2. Common notation</h2>
+</div>
+<div class="cards two">
+<article class="formula-card">
+<h3>Signal and baseline</h3>
+<p>We use:</p>
+<p class="math">\[x_i = x(t_i) \quad \text{observed signal at time } t_i\]</p>
+<p class="math">\[\hat{x}_i = \hat{x}(t_i) \quad \text{smoothed or reconstructed signal}\]</p>
+<p class="math">\[b_i = b(t_i) \quad \text{static, dynamic, or local baseline}\]</p>
+</article>
+<article class="formula-card">
+<h3>Core metrics</h3>
+<p class="math">\[A_i = x(t_{p,i}) - b(t_{p,i})\]</p>
+<p>Amplitude above baseline at the peak of event \(i\).</p>
+<p class="math">\[\Delta F/F_0 = \frac{x(t_{p,i}) - b(t_{p,i})}{b(t_{p,i})}\]</p>
+<p>Relative fluorescence change. In the application, the <code>Baseline</code> term serves as \(F_0\).</p>
+</article>
+</div>
+</section>
+<section class="section" id="modules">
+<div class="section-heading">
+<p class="eyebrow">Active modules</p>
+<h2>3. Module guides</h2>
+</div>
+<div class="cards two">
+<article class="module-card accent-blue">
+<p class="module-label">Module 1</p>
+<h3>FFT + Baseline Analysis</h3>
+<p>
               Covers FFT smoothing, peak detection, baseline estimation, AUC, FWHM/FWHP, optional sigmoid models, Fourier Analysis, Baseline Sensitivity Analysis, and FFT Selection Criteria.
             </p>
-            <ul class="checklist">
-              <li>Meaning of <code>f</code>, <code>k_keep</code>, <code>corr_raw_smooth</code>, and <code>retained_power_frac</code>.</li>
-              <li>How to interpret residuals, the periodogram, and FFT selection criteria.</li>
-              <li>What each facet in the baseline sensitivity plot represents.</li>
-            </ul>
-            <a class="button inline" href="fft-guide.html">Open FFT guide</a>
-          </article>
-
-          <article class="module-card accent-green">
-            <p class="module-label">Module 2</p>
-            <h3>Wavelet Ridgewalking</h3>
-            <p>
+<ul class="checklist">
+<li>Meaning of <code>f</code>, <code>k_keep</code>, <code>corr_raw_smooth</code>, and <code>retained_power_frac</code>.</li>
+<li>How to interpret residuals, the periodogram, and FFT selection criteria.</li>
+<li>What each facet in the baseline sensitivity plot represents.</li>
+</ul>
+<a class="button inline" href="fft-guide-english-version.html">Open FFT guide</a>
+</article>
+<article class="module-card accent-green">
+<p class="module-label">Module 2</p>
+<h3>Wavelet Ridgewalking</h3>
+<p>
               Explains how the application detects events as multiscale structures, connects local maxima into ridges, and calculates biologically relevant metrics after baseline correction.
             </p>
-            <ul class="checklist">
-              <li>Meaning of scale, CWT amplitude, ridge length, and event status.</li>
-              <li>How to interpret the CWT map and the detected-event plot.</li>
-              <li>How to interpret global AUC, Event_AUC, and metric families.</li>
-            </ul>
-            <a class="button inline" href="wavelet-guide.html">Open Wavelet guide</a>
-          </article>
-        </div>
-      </section>
-
-      <section id="baseline" class="section soft">
-        <div class="section-heading">
-          <p class="eyebrow">Shared terminology</p>
-          <h2>4. Shared baselines</h2>
-        </div>
-        <p>
+<ul class="checklist">
+<li>Meaning of scale, CWT amplitude, ridge length, and event status.</li>
+<li>How to interpret the CWT map and the detected-event plot.</li>
+<li>How to interpret global AUC, Event_AUC, and metric families.</li>
+</ul>
+<a class="button inline" href="wavelet-guide-english-version.html">Open Wavelet guide</a>
+</article>
+</div>
+</section>
+<section class="section soft" id="baseline">
+<div class="section-heading">
+<p class="eyebrow">Shared terminology</p>
+<h2>4. Shared baselines</h2>
+</div>
+<p>
           Both modules use equivalent baseline labels so that FFT- and Wavelet-derived metrics can be compared consistently.
         </p>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr><th>Baseline</th><th>Concept</th><th>When it is useful</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Standard definition</td><td>Mean of an initial fraction of the signal.</td><td>Recordings in which the beginning of the trace represents the resting state.</td></tr>
-              <tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from low fluorescence values.</td><td>Signals with frequent events but identifiable low-fluorescence intervals.</td></tr>
-              <tr><td>Rolling percentile baseline</td><td>Dynamic baseline calculated using a moving window and percentile.</td><td>Long recordings with slow baseline drift.</td></tr>
-              <tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline defined between minima before and after the peak.</td><td>Events with a variable local baseline.</td></tr>
-              <tr><td>Median signal (legacy)</td><td>Median of the full signal.</td><td>Retrospective comparison or rapid exploratory analysis.</td></tr>
-              <tr><td>Mean signal (legacy)</td><td>Mean of the full signal.</td><td>Retrospective comparison; sensitive to large peaks.</td></tr>
-              <tr><td>Min</td><td>Observed minimum.</td><td>Simple lower reference; may overestimate amplitudes when downward noise is present.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Baseline</th><th>Concept</th><th>When it is useful</th></tr>
+</thead>
+<tbody>
+<tr><td>Standard definition</td><td>Mean of an initial fraction of the signal.</td><td>Recordings in which the beginning of the trace represents the resting state.</td></tr>
+<tr><td>Low-fluorescence region baseline</td><td>Baseline estimated from low fluorescence values.</td><td>Signals with frequent events but identifiable low-fluorescence intervals.</td></tr>
+<tr><td>Rolling percentile baseline</td><td>Dynamic baseline calculated using a moving window and percentile.</td><td>Long recordings with slow baseline drift.</td></tr>
+<tr><td>Event-specific baseline: left-right FFT minima</td><td>Local baseline defined between minima before and after the peak.</td><td>Events with a variable local baseline.</td></tr>
+<tr><td>Median signal (legacy)</td><td>Median of the full signal.</td><td>Retrospective comparison or rapid exploratory analysis.</td></tr>
+<tr><td>Mean signal (legacy)</td><td>Mean of the full signal.</td><td>Retrospective comparison; sensitive to large peaks.</td></tr>
+<tr><td>Min</td><td>Observed minimum.</td><td>Simple lower reference; may overestimate amplitudes when downward noise is present.</td></tr>
+</tbody>
+</table>
+</div>
+</section><section class="section soft" id="output-gallery">
+<div class="section-heading">
+<p class="eyebrow">Visual output guide</p>
+<h2>5. CalciumInsights output gallery</h2>
+</div>
+<div class="output-gallery">
+<div class="gallery-intro">
+<div>
+<p>
+          This gallery gives users a visual preview of the main FFT + Baseline Analysis outputs before they run CalciumInsights. Each example shows the same calcium trace evaluated under the baseline definitions available in the app, allowing users to see how event-level measurements are annotated.
+        </p>
+<p>
+          The examples are intentionally organized by concept rather than shown as one long list. Open each group to inspect the metric-specific plots.
+        </p>
+<div aria-label="Gallery categories" class="badge-row">
+<span class="badge">Baseline overview</span>
+<span class="badge">Event timing</span>
+<span class="badge">Amplitude and AUC</span>
+<span class="badge">Width and duration</span>
+<span class="badge">Rise dynamics</span>
+<span class="badge">Optional sigmoid modeling</span>
+</div>
+</div>
+<div class="gallery-note">
+<strong>How to read these examples:</strong>
+<p>
+          The black curve represents the FFT-smoothed calcium signal. The green dashed curve or line represents the selected baseline. Colored overlays mark the specific quantity being measured, such as onset, peak time, amplitude, AUC, width, rise rate, or sigmoid-derived decay metrics.
+        </p>
+</div>
+</div>
 
-      <section id="how-to-use" class="section">
-        <div class="section-heading">
-          <p class="eyebrow">Practical use</p>
-          <h2>5. How to use this guide</h2>
-        </div>
-        <div class="cards three">
-          <article class="mini-card">
-            <h3>1. Configure the application</h3>
-            <p>Select the dataset, ROI, baseline method, and detection parameters.</p>
-          </article>
-          <article class="mini-card">
-            <h3>2. Run and inspect</h3>
-            <p>Review the tables and plots generated by the selected module.</p>
-          </article>
-          <article class="mini-card">
-            <h3>3. Search for the exact output name</h3>
-            <p>Use the module table of contents to locate the metric or output displayed in the application.</p>
-          </article>
-        </div>
-      </section>
-
-    
-
-  <footer class="footer">
-    <p>CalciumInsights — Detailed User Guide.</p>
-  </footer>
-
-  <script src="script.js"></script>
-</body>
+<div>
+<h3>Featured example: baseline definitions on the same trace</h3>
+<p>
+    This first plot is the recommended starting point. It shows how the same detected calcium transients are quantified under the five baseline definitions currently highlighted in the FFT module.
+  </p>
+</div>
+<article class="figure-card featured">
+<div class="figure-card-header">
+<h3>Baseline across all detected calcium transients</h3>
+<p>Baseline overview</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Baseline_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Baseline across all detected calcium transients plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Baseline_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Shows the same calcium trace under each baseline definition. The green dashed line marks the baseline used to quantify each event.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Baseline_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Baseline_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><h3>Metric-specific examples</h3><div class="metric-accordion"><details open=""><summary>Event timing</summary><p class="figure-caption">These plots show when events start and when peak occurrence is assigned.</p><div class="metric-grid"><article class="figure-card">
+<div class="figure-card-header">
+<h3>Time onset</h3>
+<p>Event timing</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Time_Onset_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Time onset plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Time_Onset_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Orange dotted lines indicate the estimated onset time for each detected calcium transient.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Time_Onset_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Time_Onset_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Peak occurrence time</h3>
+<p>Event timing</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Peak_Occurrence_Time_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Peak occurrence time plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Peak_Occurrence_Time_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Red vertical lines mark the time at which each detected transient reaches its peak.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Peak_Occurrence_Time_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Peak_Occurrence_Time_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article></div></details><details><summary>Amplitude and area</summary><p class="figure-caption">These plots show how CalciumInsights annotates peak height, prominence, and area under the curve relative to baseline.</p><div class="metric-grid"><article class="figure-card">
+<div class="figure-card-header">
+<h3>Amplitude</h3>
+<p>Amplitude and area</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Amplitude_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Amplitude plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Amplitude_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Red dashed segments illustrate event amplitude relative to the selected baseline.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Amplitude_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Amplitude_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Prominence</h3>
+<p>Amplitude and area</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Prominence_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Prominence plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Prominence_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Blue dashed segments highlight event prominence, emphasizing the local rise above neighboring minima.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Prominence_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Prominence_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Area under the curve (AUC)</h3>
+<p>Amplitude and area</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_AUC_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Area under the curve (AUC) plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_AUC_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Green shaded regions show the area integrated above the baseline for detected calcium transients.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_AUC_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_AUC_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article></div></details><details><summary>Width and duration</summary><p class="figure-caption">These plots show width- and duration-related metrics, which can be particularly sensitive to the baseline definition.</p><div class="metric-grid"><article class="figure-card">
+<div class="figure-card-header">
+<h3>FWHP</h3>
+<p>Width and duration</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_FWHP_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="FWHP plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_FWHP_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Orange horizontal bars indicate full width at half prominence for detected transients.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_FWHP_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_FWHP_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>FWHM</h3>
+<p>Width and duration</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_FWHM_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="FWHM plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_FWHM_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Dark red horizontal bars indicate full width at half maximum for each detected transient.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_FWHM_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_FWHM_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Transient duration</h3>
+<p>Width and duration</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Transient_Duration_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Transient duration plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Transient_Duration_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Orange horizontal segments summarize event duration between the detected start and end of each transient.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Transient_Duration_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Transient_Duration_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article></div></details><details><summary>Rise dynamics</summary><p class="figure-caption">These plots show the interval and slope used to summarize how rapidly each calcium transient rises.</p><div class="metric-grid"><article class="figure-card">
+<div class="figure-card-header">
+<h3>Peak rise time</h3>
+<p>Rise dynamics</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Peak_Rise_Time_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Peak rise time plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Peak_Rise_Time_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Green arrows indicate the time interval used to calculate rise time from onset or local baseline to the peak.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Peak_Rise_Time_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Peak_Rise_Time_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Rise rate</h3>
+<p>Rise dynamics</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/Panel_Rise_Rate_all_events_app_baselines.png" rel="noopener" target="_blank">
+<img alt="Rise rate plot generated by CalciumInsights" loading="lazy" src="assets/figures/Panel_Rise_Rate_all_events_app_baselines.png"/>
+</a>
+</div>
+<p class="figure-caption">Green sloped segments represent the rising phase used to estimate rise rate.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/Panel_Rise_Rate_all_events_app_baselines.png">Download PNG</a>
+<a href="assets/figures/Panel_Rise_Rate_all_events_app_baselines.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article></div></details><details><summary>Optional sigmoid modeling</summary><p class="figure-caption">These outputs appear when optional sigmoid modeling is enabled. They summarize slope, goodness of fit, and decay behavior.</p><div class="metric-grid"><article class="figure-card">
+<div class="figure-card-header">
+<h3>Single-sigmoid slope at t0</h3>
+<p>Optional sigmoid modeling</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/SingleSigmoid_Panel_SingleSigmoid_Slope_at_t0_app_logic.png" rel="noopener" target="_blank">
+<img alt="Single-sigmoid slope at t0 plot generated by CalciumInsights" loading="lazy" src="assets/figures/SingleSigmoid_Panel_SingleSigmoid_Slope_at_t0_app_logic.png"/>
+</a>
+</div>
+<p class="figure-caption">Displays optional single-sigmoid fits and the slope around t0 for each detected event.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/SingleSigmoid_Panel_SingleSigmoid_Slope_at_t0_app_logic.png">Download PNG</a>
+<a href="assets/figures/SingleSigmoid_Panel_SingleSigmoid_Slope_at_t0_app_logic.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Single-sigmoid R²</h3>
+<p>Optional sigmoid modeling</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/SingleSigmoid_Panel_SingleSigmoid_R2_app_logic.png" rel="noopener" target="_blank">
+<img alt="Single-sigmoid R² plot generated by CalciumInsights" loading="lazy" src="assets/figures/SingleSigmoid_Panel_SingleSigmoid_R2_app_logic.png"/>
+</a>
+</div>
+<p class="figure-caption">Shows the goodness-of-fit annotations for single-sigmoid event modeling.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/SingleSigmoid_Panel_SingleSigmoid_R2_app_logic.png">Download PNG</a>
+<a href="assets/figures/SingleSigmoid_Panel_SingleSigmoid_R2_app_logic.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Double-sigmoid decay time</h3>
+<p>Optional sigmoid modeling</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Time_app_logic.png" rel="noopener" target="_blank">
+<img alt="Double-sigmoid decay time plot generated by CalciumInsights" loading="lazy" src="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Time_app_logic.png"/>
+</a>
+</div>
+<p class="figure-caption">Purple fitted curves and orange arrows indicate decay-time estimates from optional double-sigmoid modeling.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Time_app_logic.png">Download PNG</a>
+<a href="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Time_app_logic.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article><article class="figure-card">
+<div class="figure-card-header">
+<h3>Double-sigmoid decay slope</h3>
+<p>Optional sigmoid modeling</p>
+</div>
+<div class="figure-frame">
+<a href="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Slope_app_logic.png" rel="noopener" target="_blank">
+<img alt="Double-sigmoid decay slope plot generated by CalciumInsights" loading="lazy" src="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Slope_app_logic.png"/>
+</a>
+</div>
+<p class="figure-caption">Highlights decay slope estimates from the fitted double-sigmoid decay phase.</p>
+<div class="figure-actions">
+<a download="" href="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Slope_app_logic.png">Download PNG</a>
+<a href="assets/figures/DoubleSigmoid_Panel_DoubleSigmoid_Decay_Slope_app_logic.png" rel="noopener" target="_blank">Open full size</a>
+</div>
+</article></div></details></div></div>
+</section>
+<section class="section" id="how-to-use">
+<div class="section-heading">
+<p class="eyebrow">Practical use</p>
+<h2>6. How to use this guide</h2>
+</div>
+<div class="cards three">
+<article class="mini-card">
+<h3>1. Configure the application</h3>
+<p>Select the dataset, ROI, baseline method, and detection parameters.</p>
+</article>
+<article class="mini-card">
+<h3>2. Run and inspect</h3>
+<p>Review the tables and plots generated by the selected module.</p>
+</article>
+<article class="mini-card">
+<h3>3. Search for the exact output name</h3>
+<p>Use the module table of contents to locate the metric or output displayed in the application.</p>
+</article>
+</div>
+</section>
+<footer class="footer">
+<p>CalciumInsights — Detailed User Guide.</p>
+</footer>
+<script src="script.js"></script>
+</div></main></body>
 </html>
